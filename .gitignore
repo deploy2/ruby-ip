@@ -1,0 +1,11 @@
+*~
+*.bak
+*.orig
+*.rej
+*.log
+doc/rdoc
+coverage
+.svn
+.irbrc
+rerun.txt
+tmp

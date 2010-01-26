@@ -1,0 +1,99 @@
+== ruby-ip library
+
+This is a library for manipulating IP addresses. Feature overview:
+
+* Create from string and to string
+
+    require 'ip'
+    ip = IP.new("192.0.2.53/24")
+    ip.to_s       # "192.0.2.53/24"
+    ip.to_i       # 3221226037
+    ip.to_hex     # "c0000235"
+    ip.to_addr    # "192.0.2.53"
+    ip.pfxlen     # 24
+
+* Qualify IP address with "routing context" (VRF)
+
+    ip = IP.new("192.0.2.53/24@cust1")
+    ip.to_s       # "192.0.2.53/24@cust1"
+    ip.to_addrlen # "192.0.2.53/24"
+    ip.ctx        # "cust1"
+
+* Clean implementation of IP::V4 and IP::V6 as subclasses of IP
+
+    ip1 = IP.new("192.0.2.53/24")       #<IP::V4 192.0.2.53/24>
+    ip2 = IP.new("2001:db8:be00::/48")  #<IP::V6 2001:db8:be00::/48>
+    ip1.is_a?(IP::V4)                   # true
+
+* Create directly from integers or hex
+
+    ip = IP::V4.new(3221226037, 24, "cust1")
+    ip = IP::V4.new("c0000235", 24, "cust1")
+
+* Netmask manipulation
+
+    ip = IP.new("192.0.2.53/24")
+    ip.network         #<IP::V4 192.0.2.0/24>
+    ip.network(1)      #<IP::V4 192.0.2.1/24>
+    ip.broadcast       #<IP::V4 192.0.2.255/24>
+    ip.broadcast(-1)   #<IP::V4 192.0.2.254/24>
+    ip.mask            # 255
+    ip.size            # 256
+    ip.netmask.to_s    # "255.255.255.0"
+    ip.wildmask.to_s   # "0.0.0.255"
+
+* Address masking
+
+    ip = IP.new("192.0.2.53/24")
+    ip.offset?         # true
+    ip.offset          # 53
+    ip.mask!
+    ip.to_s            # "192.0.2.0/24"
+    ip.offset?         # false
+
+* Simple IP arithmetic
+
+    ip = IP.new("192.0.2.53/24")
+    ip + 4             #<IP::V4 192.0.2.57/24>
+    ip | 7             #<IP::V4 192.0.2.55/24>
+    ip ^ 7             #<IP::V4 192.0.2.50/24>
+    ~ip                #<IP::V4 63.255.253.202/24>
+
+* Convert to and from a compact Array representation
+
+    ip1 = IP.new("192.0.2.53/24@cust1")
+    ip1.to_a     # ["v4", 3221226037, 24, "cust1"]
+
+    ip2 = IP.new(["v4", 3221226037, 24, "cust1"])
+    ip1 == ip2   # true
+
+* Hex array representation, useful when talking to languages which don't
+  have Bignum support
+
+    ip1 = IP.new("2001:db8:be00::/48@cust1")
+    ip1.to_ah    # ["v6", "20010db8be0000000000000000000000", 48, "cust1"]
+
+    ip2 = IP.new(["v6", "20010db8be0000000000000000000000", 48, "cust1"])
+    ip1 == ip2   # true
+
+* Addresses are Comparable, sortable, and can be used as Hash keys
+
+== Why not IPAddr?
+
+Ruby bundles an IPAddr class (ipaddr.rb). However there are a number of
+serious problems with this library.
+
+1. Given an IP address with a netmask or prefix (e.g. 192.0.2.0/24) it's
+   very hard to get access to the netmask part. It involves digging around
+   instance variables.
+
+2. It's impossible to deal with an off-base address with prefix, because
+   IPAddr forcibly masks it to the base. e.g. 192.0.2.53/24 is stored as
+   192.0.2.0/24
+
+3. IPAddr uses calls to the socket library to validate IP addresses, and
+   this can trigger spurious DNS lookups when given an invalid IP address.
+   ruby-ip does not depend on the socket library at all, unless you
+   require 'ip/socket' to have access to the Socket::AF_INET and
+   Socket::AF_INET6 constants.
+
