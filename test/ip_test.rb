@@ -99,13 +99,17 @@ class IPTest < Test::Unit::TestCase
       should "have to_hex" do
         assert_equal "01020304", @addr.to_hex
       end
-
+      
       should "have inspect" do
         assert_equal "#<IP::V4 1.2.3.4/24@foo>", @addr.inspect
       end
-            
+      
       should "have pfxlen" do
         assert_equal 24, @addr.pfxlen
+      end
+      
+      should "have proto" do
+        assert_equal "v4", @addr.proto
       end
       
       should "have to_range" do
@@ -254,6 +258,7 @@ class IPTest < Test::Unit::TestCase
       assert_equal "dead:beef::123/48", res.to_addrlen
       assert_equal 0xdeadbeef000000000000000000000123, res.to_i
       assert_equal 48, res.pfxlen
+      assert_equal "v6", res.proto
       assert_nil res.ctx
     end
     
