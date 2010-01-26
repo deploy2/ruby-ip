@@ -330,9 +330,10 @@ Examples:
     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 49</span>
 49:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">addr</span>, <span class="ruby-identifier">pfxlen</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">ctx</span>=<span class="ruby-keyword kw">nil</span>)
 50:     <span class="ruby-ivar">@addr</span> = <span class="ruby-identifier">addr</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">addr</span>.<span class="ruby-identifier">to_i</span>(<span class="ruby-value">16</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">addr</span>.<span class="ruby-identifier">to_i</span>
-51:     <span class="ruby-ivar">@pfxlen</span> = <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">||</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span>
-52:     <span class="ruby-ivar">@ctx</span> = <span class="ruby-identifier">ctx</span>
-53:   <span class="ruby-keyword kw">end</span>
+51:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;Invalid address value&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@addr</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@addr</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">MASK</span>
+52:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">pfxlen</span> = <span class="ruby-identifier">pfxlen</span>
+53:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">ctx</span> = <span class="ruby-identifier">ctx</span>
+54:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -381,10 +382,10 @@ href="IP/V4.html">V4</a>/<a href="IP/V6.html">V6</a> object or nil
             onclick="toggleCode('M000028-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000028-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 188</span>
-188:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&amp;</span>(<span class="ruby-identifier">other</span>)
-189:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-190:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 195</span>
+195:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&amp;</span>(<span class="ruby-identifier">other</span>)
+196:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+197:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -404,10 +405,10 @@ href="IP/V4.html">V4</a>/<a href="IP/V6.html">V6</a> object or nil
             onclick="toggleCode('M000026-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000026-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 180</span>
-180:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">+</span>(<span class="ruby-identifier">other</span>)
-181:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-182:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 187</span>
+187:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">+</span>(<span class="ruby-identifier">other</span>)
+188:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+189:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -427,10 +428,10 @@ href="IP/V4.html">V4</a>/<a href="IP/V6.html">V6</a> object or nil
             onclick="toggleCode('M000027-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000027-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 184</span>
-184:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">-</span>(<span class="ruby-identifier">other</span>)
-185:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-186:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 191</span>
+191:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">-</span>(<span class="ruby-identifier">other</span>)
+192:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+193:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -450,10 +451,10 @@ href="IP/V4.html">V4</a>/<a href="IP/V6.html">V6</a> object or nil
             onclick="toggleCode('M000039-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000039-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 233</span>
-233:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;=&gt;</span>(<span class="ruby-identifier">other</span>)
-234:     <span class="ruby-identifier">to_a</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_a</span>
-235:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 240</span>
+240:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;=&gt;</span>(<span class="ruby-identifier">other</span>)
+241:     <span class="ruby-identifier">to_a</span> <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_a</span>
+242:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -473,10 +474,10 @@ href="IP/V4.html">V4</a>/<a href="IP/V6.html">V6</a> object or nil
             onclick="toggleCode('M000030-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000030-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 196</span>
-196:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">^</span>(<span class="ruby-identifier">other</span>)
-197:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">^</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-198:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 203</span>
+203:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">^</span>(<span class="ruby-identifier">other</span>)
+204:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">^</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+205:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -531,10 +532,10 @@ href="IP.html#M000022">offset</a> applied.
             onclick="toggleCode('M000017-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000017-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 124</span>
-124:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">broadcast</span>(<span class="ruby-identifier">offset</span>=<span class="ruby-value">0</span>)
-125:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>((<span class="ruby-ivar">@addr</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">mask</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">offset</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-126:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 131</span>
+131:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">broadcast</span>(<span class="ruby-identifier">offset</span>=<span class="ruby-value">0</span>)
+132:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>((<span class="ruby-ivar">@addr</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">mask</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">offset</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+133:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -554,10 +555,10 @@ href="IP.html#M000022">offset</a> applied.
             onclick="toggleCode('M000038-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000038-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 229</span>
-229:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>)
-230:     <span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_a</span>)
-231:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 236</span>
+236:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>)
+237:     <span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">eql?</span>(<span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_a</span>)
+238:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -577,10 +578,10 @@ href="IP.html#M000022">offset</a> applied.
             onclick="toggleCode('M000037-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000037-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 225</span>
-225:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hash</span>
-226:     <span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">hash</span>
-227:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 232</span>
+232:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hash</span>
+233:     <span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">hash</span>
+234:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -600,10 +601,10 @@ href="IP.html#M000022">offset</a> applied.
             onclick="toggleCode('M000033-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000033-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 209</span>
-209:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>
-210:     <span class="ruby-identifier">res</span> = <span class="ruby-node">&quot;#&lt;#{self.class} #{to_s}&gt;&quot;</span>
-211:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 216</span>
+216:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>
+217:     <span class="ruby-identifier">res</span> = <span class="ruby-node">&quot;#&lt;#{self.class} #{to_s}&gt;&quot;</span>
+218:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -623,10 +624,10 @@ href="IP.html#M000022">offset</a> applied.
             onclick="toggleCode('M000035-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000035-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 217</span>
-217:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ipv4_compat?</span>
-218:     <span class="ruby-keyword kw">false</span>
-219:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 224</span>
+224:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ipv4_compat?</span>
+225:     <span class="ruby-keyword kw">false</span>
+226:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -646,10 +647,10 @@ href="IP.html#M000022">offset</a> applied.
             onclick="toggleCode('M000034-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000034-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 213</span>
-213:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ipv4_mapped?</span>
-214:     <span class="ruby-keyword kw">false</span>
-215:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 220</span>
+220:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ipv4_mapped?</span>
+221:     <span class="ruby-keyword kw">false</span>
+222:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -674,10 +675,10 @@ href="IP.html#M000015">mask</a> of 255 (0x000000ff)
             onclick="toggleCode('M000015-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000015-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 108</span>
-108:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mask</span>
-109:     <span class="ruby-ivar">@mask</span> <span class="ruby-operator">||=</span> (<span class="ruby-value">1</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@pfxlen</span>)) <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
-110:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 115</span>
+115:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mask</span>
+116:     <span class="ruby-ivar">@mask</span> <span class="ruby-operator">||=</span> (<span class="ruby-value">1</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@pfxlen</span>)) <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+117:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -703,11 +704,11 @@ Masks the address such that it is the base of the subnet
             onclick="toggleCode('M000020-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000020-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 142</span>
-142:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mask!</span>
-143:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;=</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>
-144:     <span class="ruby-keyword kw">self</span>
-145:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 149</span>
+149:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mask!</span>
+150:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;=</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>
+151:     <span class="ruby-keyword kw">self</span>
+152:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -727,10 +728,10 @@ Masks the address such that it is the base of the subnet
             onclick="toggleCode('M000036-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000036-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 221</span>
-221:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">native</span>
-222:     <span class="ruby-keyword kw">self</span>
-223:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 228</span>
+228:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">native</span>
+229:     <span class="ruby-keyword kw">self</span>
+230:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -757,10 +758,10 @@ representing the <a href="IP.html#M000018">netmask</a>
             onclick="toggleCode('M000018-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000018-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 130</span>
-130:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">netmask</span>
-131:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">MASK</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>)
-132:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 137</span>
+137:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">netmask</span>
+138:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">MASK</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>)
+139:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -789,10 +790,10 @@ href="IP.html#M000022">offset</a> applied.
             onclick="toggleCode('M000016-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000016-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 116</span>
-116:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">network</span>(<span class="ruby-identifier">offset</span>=<span class="ruby-value">0</span>)
-117:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>((<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">offset</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-118:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 123</span>
+123:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">network</span>(<span class="ruby-identifier">offset</span>=<span class="ruby-value">0</span>)
+124:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>((<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">offset</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+125:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -819,10 +820,10 @@ address
             onclick="toggleCode('M000022-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000022-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 156</span>
-156:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">offset</span>
-157:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">-</span> (<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>)
-158:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 163</span>
+163:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">offset</span>
+164:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">-</span> (<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>)
+165:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -847,10 +848,10 @@ because the base is 1.2.3.0/24)
             onclick="toggleCode('M000021-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000021-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 150</span>
-150:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">offset?</span>
-151:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">!=</span> (<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>)
-152:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 157</span>
+157:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">offset?</span>
+158:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">!=</span> (<span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>)
+159:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -873,11 +874,17 @@ Change the prefix length. If nil, the maximum is used (32 or 128)
             onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000014-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 101</span>
-101:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pfxlen=</span>(<span class="ruby-identifier">pfxlen</span>)
-102:     <span class="ruby-ivar">@pfxlen</span> = <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">||</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 102</span>
+102:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pfxlen=</span>(<span class="ruby-identifier">pfxlen</span>)
 103:     <span class="ruby-ivar">@mask</span> = <span class="ruby-keyword kw">nil</span>
-104:   <span class="ruby-keyword kw">end</span>
+104:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pfxlen</span>
+105:       <span class="ruby-identifier">pfxlen</span> = <span class="ruby-identifier">pfxlen</span>.<span class="ruby-identifier">to_i</span>
+106:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;Invalid prefix length&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span>
+107:       <span class="ruby-ivar">@pfxlen</span> = <span class="ruby-identifier">pfxlen</span>
+108:     <span class="ruby-keyword kw">else</span>
+109:       <span class="ruby-ivar">@pfxlen</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span>
+110:     <span class="ruby-keyword kw">end</span>
+111:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -900,10 +907,10 @@ Return the protocol in string form, &quot;v4&quot; or &quot;v6&quot;
             onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000007-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 56</span>
-56:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proto</span>
-57:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>
-58:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 57</span>
+57:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">proto</span>
+58:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>
+59:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -931,11 +938,11 @@ href="IP.html">IP</a>.
             onclick="toggleCode('M000023-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000023-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 163</span>
-163:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_pfxlen!</span>
-164:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">pfxlen</span> = <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">offset?</span>
-165:     <span class="ruby-keyword kw">self</span>
-166:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 170</span>
+170:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_pfxlen!</span>
+171:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">pfxlen</span> = <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">offset?</span>
+172:     <span class="ruby-keyword kw">self</span>
+173:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -961,10 +968,10 @@ The number of <a href="IP.html">IP</a> addresses in subnet
             onclick="toggleCode('M000025-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000025-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 176</span>
-176:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">size</span>
-177:     <span class="ruby-identifier">mask</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
-178:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 183</span>
+183:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">size</span>
+184:     <span class="ruby-identifier">mask</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+185:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -984,11 +991,11 @@ The number of <a href="IP.html">IP</a> addresses in subnet
             onclick="toggleCode('M000032-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000032-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 204</span>
-204:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">succ!</span>
-205:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
-206:     <span class="ruby-keyword kw">self</span>
-207:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 211</span>
+211:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">succ!</span>
+212:     <span class="ruby-ivar">@addr</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+213:     <span class="ruby-keyword kw">self</span>
+214:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1020,11 +1027,11 @@ doesn&#8216;t exist)
             onclick="toggleCode('M000012-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000012-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 86</span>
-86:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_a</span>
-87:     <span class="ruby-ivar">@ctx</span> <span class="ruby-operator">?</span> [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-ivar">@addr</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>] <span class="ruby-operator">:</span>
-88:            [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-ivar">@addr</span>, <span class="ruby-ivar">@pfxlen</span>]
-89:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 87</span>
+87:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_a</span>
+88:     <span class="ruby-ivar">@ctx</span> <span class="ruby-operator">?</span> [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-ivar">@addr</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>] <span class="ruby-operator">:</span>
+89:            [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-ivar">@addr</span>, <span class="ruby-ivar">@pfxlen</span>]
+90:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1049,10 +1056,10 @@ single address
             onclick="toggleCode('M000009-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000009-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 67</span>
-67:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_addrlen</span>
-68:     <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span> <span class="ruby-value">? </span><span class="ruby-identifier">to_addr</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{to_addr}/#{pfxlen}&quot;</span>
-69:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 68</span>
+68:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_addrlen</span>
+69:     <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span> <span class="ruby-value">? </span><span class="ruby-identifier">to_addr</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{to_addr}/#{pfxlen}&quot;</span>
+70:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1080,11 +1087,11 @@ depending on whether there is a routing context set, using hexadecimal.
             onclick="toggleCode('M000013-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000013-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 95</span>
-95:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_ah</span>
-96:     <span class="ruby-ivar">@ctx</span> <span class="ruby-operator">?</span> [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-identifier">to_hex</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>] <span class="ruby-operator">:</span>
-97:            [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-identifier">to_hex</span>, <span class="ruby-ivar">@pfxlen</span>]
-98:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 96</span>
+96:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_ah</span>
+97:     <span class="ruby-ivar">@ctx</span> <span class="ruby-operator">?</span> [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-identifier">to_hex</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>] <span class="ruby-operator">:</span>
+98:            [<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">PROTO</span>, <span class="ruby-identifier">to_hex</span>, <span class="ruby-ivar">@pfxlen</span>]
+99:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1163,10 +1170,10 @@ Return the address as a hexadecimal string (8 or 32 digits)
             onclick="toggleCode('M000011-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000011-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 77</span>
-77:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_hex</span>
-78:     <span class="ruby-ivar">@addr</span>.<span class="ruby-identifier">to_s</span>(<span class="ruby-value">16</span>).<span class="ruby-identifier">rjust</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">2</span>,<span class="ruby-value str">&quot;0&quot;</span>)
-79:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 78</span>
+78:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_hex</span>
+79:     <span class="ruby-ivar">@addr</span>.<span class="ruby-identifier">to_s</span>(<span class="ruby-value">16</span>).<span class="ruby-identifier">rjust</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">ADDR_BITS</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">2</span>,<span class="ruby-value str">&quot;0&quot;</span>)
+80:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1189,10 +1196,10 @@ Return the address as an Integer
             onclick="toggleCode('M000010-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000010-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 72</span>
-72:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_i</span>
-73:     <span class="ruby-ivar">@addr</span>
-74:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 73</span>
+73:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_i</span>
+74:     <span class="ruby-ivar">@addr</span>
+75:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1212,12 +1219,12 @@ Return the address as an Integer
             onclick="toggleCode('M000024-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000024-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 168</span>
-168:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_range</span>
-169:     <span class="ruby-identifier">a1</span> = <span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>
-170:     <span class="ruby-identifier">a2</span> = <span class="ruby-identifier">a1</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">mask</span>
-171:     (<span class="ruby-identifier">a1</span><span class="ruby-operator">..</span><span class="ruby-identifier">a2</span>)
-172:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 175</span>
+175:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_range</span>
+176:     <span class="ruby-identifier">a1</span> = <span class="ruby-ivar">@addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-operator">~</span><span class="ruby-identifier">mask</span>
+177:     <span class="ruby-identifier">a2</span> = <span class="ruby-identifier">a1</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">mask</span>
+178:     (<span class="ruby-identifier">a1</span><span class="ruby-operator">..</span><span class="ruby-identifier">a2</span>)
+179:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1240,10 +1247,10 @@ Return the string representation of the address, x.x.x.x[/pfxlen][@ctx]
             onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000008-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 61</span>
-61:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>
-62:     <span class="ruby-identifier">ctx</span> <span class="ruby-value">? </span><span class="ruby-node">&quot;#{to_addrlen}@#{ctx}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">to_addrlen</span>
-63:   <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/ip/base.rb, line 62</span>
+62:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>
+63:     <span class="ruby-identifier">ctx</span> <span class="ruby-value">? </span><span class="ruby-node">&quot;#{to_addrlen}@#{ctx}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">to_addrlen</span>
+64:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1297,10 +1304,10 @@ href="IP.html#M000018">netmask</a>)
             onclick="toggleCode('M000019-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000019-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 136</span>
-136:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">wildmask</span>
-137:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">mask</span>)
-138:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 143</span>
+143:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">wildmask</span>
+144:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">mask</span>)
+145:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1320,10 +1327,10 @@ href="IP.html#M000018">netmask</a>)
             onclick="toggleCode('M000029-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000029-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 192</span>
-192:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">|</span>(<span class="ruby-identifier">other</span>)
-193:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-194:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 199</span>
+199:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">|</span>(<span class="ruby-identifier">other</span>)
+200:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@addr</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_int</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+201:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -1343,10 +1350,10 @@ href="IP.html#M000018">netmask</a>)
             onclick="toggleCode('M000031-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000031-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 200</span>
-200:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">~</span>
-201:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">~@</span><span class="ruby-identifier">addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">MASK</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
-202:   <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 207</span>
+207:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">~</span>
+208:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">~@</span><span class="ruby-identifier">addr</span> <span class="ruby-operator">&amp;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span><span class="ruby-operator">::</span><span class="ruby-constant">MASK</span>, <span class="ruby-ivar">@pfxlen</span>, <span class="ruby-ivar">@ctx</span>)
+209:   <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

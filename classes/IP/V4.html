@@ -174,17 +174,17 @@ valid IPv4 address, nil otherwise
             onclick="toggleCode('M000047-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000047-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 247</span>
-247:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">str</span>)
-248:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\A(\d+)\.(\d+)\.(\d+)\.(\d+)(?:\/(\d+))?(?:@(.*))?\z/</span>
-249:         <span class="ruby-identifier">pfxlen</span> = (<span class="ruby-identifier">$5</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ADDR_BITS</span>).<span class="ruby-identifier">to_i</span>
-250:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">32</span>
-251:         <span class="ruby-identifier">addrs</span> = [<span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">$3</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">$4</span>.<span class="ruby-identifier">to_i</span>]
-252:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">addrs</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span><span class="ruby-operator">&gt;</span><span class="ruby-value">255</span> }
-253:         <span class="ruby-identifier">addr</span> = (((((<span class="ruby-identifier">addrs</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">8</span>) <span class="ruby-operator">|</span> <span class="ruby-identifier">addrs</span>[<span class="ruby-value">1</span>]) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">8</span>) <span class="ruby-operator">|</span> <span class="ruby-identifier">addrs</span>[<span class="ruby-value">2</span>]) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">8</span>) <span class="ruby-operator">|</span> <span class="ruby-identifier">addrs</span>[<span class="ruby-value">3</span>]
-254:         <span class="ruby-identifier">new</span>(<span class="ruby-identifier">addr</span>, <span class="ruby-identifier">pfxlen</span>, <span class="ruby-identifier">$6</span>)
-255:       <span class="ruby-keyword kw">end</span>
-256:     <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 254</span>
+254:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">str</span>)
+255:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\A(\d+)\.(\d+)\.(\d+)\.(\d+)(?:\/(\d+))?(?:@(.*))?\z/</span>
+256:         <span class="ruby-identifier">pfxlen</span> = (<span class="ruby-identifier">$5</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ADDR_BITS</span>).<span class="ruby-identifier">to_i</span>
+257:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pfxlen</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">32</span>
+258:         <span class="ruby-identifier">addrs</span> = [<span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">$3</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">$4</span>.<span class="ruby-identifier">to_i</span>]
+259:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">addrs</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">n</span><span class="ruby-operator">&gt;</span><span class="ruby-value">255</span> }
+260:         <span class="ruby-identifier">addr</span> = (((((<span class="ruby-identifier">addrs</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">8</span>) <span class="ruby-operator">|</span> <span class="ruby-identifier">addrs</span>[<span class="ruby-value">1</span>]) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">8</span>) <span class="ruby-operator">|</span> <span class="ruby-identifier">addrs</span>[<span class="ruby-value">2</span>]) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">8</span>) <span class="ruby-operator">|</span> <span class="ruby-identifier">addrs</span>[<span class="ruby-value">3</span>]
+261:         <span class="ruby-identifier">new</span>(<span class="ruby-identifier">addr</span>, <span class="ruby-identifier">pfxlen</span>, <span class="ruby-identifier">$6</span>)
+262:       <span class="ruby-keyword kw">end</span>
+263:     <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
@@ -209,11 +209,11 @@ Return just the address part as a String in dotted decimal form
             onclick="toggleCode('M000048-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000048-source">
 <pre>
-     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 259</span>
-259:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_addr</span>
-260:       <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%d.%d.%d.%d&quot;</span>,
-261:         (<span class="ruby-ivar">@addr</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">24</span>)<span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>, (<span class="ruby-ivar">@addr</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">16</span>)<span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>, (<span class="ruby-ivar">@addr</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">8</span>)<span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>, <span class="ruby-ivar">@addr</span><span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>)
-262:     <span class="ruby-keyword kw">end</span>
+     <span class="ruby-comment cmt"># File lib/ip/base.rb, line 266</span>
+266:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_addr</span>
+267:       <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%d.%d.%d.%d&quot;</span>,
+268:         (<span class="ruby-ivar">@addr</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">24</span>)<span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>, (<span class="ruby-ivar">@addr</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">16</span>)<span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>, (<span class="ruby-ivar">@addr</span><span class="ruby-operator">&gt;&gt;</span><span class="ruby-value">8</span>)<span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>, <span class="ruby-ivar">@addr</span><span class="ruby-operator">&amp;</span><span class="ruby-value">0xff</span>)
+269:     <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
