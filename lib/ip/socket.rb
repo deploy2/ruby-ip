@@ -1,3 +1,6 @@
+# Copyright (C) 2009-2010 Brian Candler <http://www.deploy2.net/>
+# Licensed under the same terms as ruby. See LICENCE.txt and COPYING.txt
+
 require 'socket'
 
 class IP
