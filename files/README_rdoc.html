@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README.rdoc</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README.rdoc</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README.rdoc
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Tue Jan 26 08:53:34 +0000 2010</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2>ruby-ip library</h2>
+<p>
+This is a library for manipulating <a href="../classes/IP.html">IP</a>
+addresses. Feature overview:
+</p>
+<ul>
+<li>Create from string and to string
+
+<pre>
+  require 'ip'
+  ip = IP.new(&quot;192.0.2.53/24&quot;)
+  ip.to_s       # &quot;192.0.2.53/24&quot;
+  ip.to_i       # 3221226037
+  ip.to_hex     # &quot;c0000235&quot;
+  ip.to_addr    # &quot;192.0.2.53&quot;
+  ip.pfxlen     # 24
+</pre>
+</li>
+<li>Qualify <a href="../classes/IP.html">IP</a> address with &quot;routing
+context&quot; (VRF)
+
+<pre>
+  ip = IP.new(&quot;192.0.2.53/24@cust1&quot;)
+  ip.to_s       # &quot;192.0.2.53/24@cust1&quot;
+  ip.to_addrlen # &quot;192.0.2.53/24&quot;
+  ip.ctx        # &quot;cust1&quot;
+</pre>
+</li>
+<li>Clean implementation of <a href="../classes/IP/V4.html">IP::V4</a> and <a
+href="../classes/IP/V6.html">IP::V6</a> as subclasses of <a
+href="../classes/IP.html">IP</a>
+
+<pre>
+  ip1 = IP.new(&quot;192.0.2.53/24&quot;)       #&lt;IP::V4 192.0.2.53/24&gt;
+  ip2 = IP.new(&quot;2001:db8:be00::/48&quot;)  #&lt;IP::V6 2001:db8:be00::/48&gt;
+  ip1.is_a?(IP::V4)                   # true
+</pre>
+</li>
+<li>Create directly from integers or hex
+
+<pre>
+  ip = IP::V4.new(3221226037, 24, &quot;cust1&quot;)
+  ip = IP::V4.new(&quot;c0000235&quot;, 24, &quot;cust1&quot;)
+</pre>
+</li>
+<li>Netmask manipulation
+
+<pre>
+  ip = IP.new(&quot;192.0.2.53/24&quot;)
+  ip.network         #&lt;IP::V4 192.0.2.0/24&gt;
+  ip.network(1)      #&lt;IP::V4 192.0.2.1/24&gt;
+  ip.broadcast       #&lt;IP::V4 192.0.2.255/24&gt;
+  ip.broadcast(-1)   #&lt;IP::V4 192.0.2.254/24&gt;
+  ip.mask            # 255
+  ip.size            # 256
+  ip.netmask.to_s    # &quot;255.255.255.0&quot;
+  ip.wildmask.to_s   # &quot;0.0.0.255&quot;
+</pre>
+</li>
+<li>Address masking
+
+<pre>
+  ip = IP.new(&quot;192.0.2.53/24&quot;)
+  ip.offset?         # true
+  ip.offset          # 53
+  ip.mask!
+  ip.to_s            # &quot;192.0.2.0/24&quot;
+  ip.offset?         # false
+</pre>
+</li>
+<li>Simple <a href="../classes/IP.html">IP</a> arithmetic
+
+<pre>
+  ip = IP.new(&quot;192.0.2.53/24&quot;)
+  ip + 4             #&lt;IP::V4 192.0.2.57/24&gt;
+  ip | 7             #&lt;IP::V4 192.0.2.55/24&gt;
+  ip ^ 7             #&lt;IP::V4 192.0.2.50/24&gt;
+  ~ip                #&lt;IP::V4 63.255.253.202/24&gt;
+</pre>
+</li>
+<li>Convert to and from a compact Array representation
+
+<pre>
+  ip1 = IP.new(&quot;192.0.2.53/24@cust1&quot;)
+  ip1.to_a     # [&quot;v4&quot;, 3221226037, 24, &quot;cust1&quot;]
+
+  ip2 = IP.new([&quot;v4&quot;, 3221226037, 24, &quot;cust1&quot;])
+  ip1 == ip2   # true
+</pre>
+</li>
+<li>Hex array representation, useful when talking to languages which
+don&#8216;t have Bignum support
+
+<pre>
+  ip1 = IP.new(&quot;2001:db8:be00::/48@cust1&quot;)
+  ip1.to_ah    # [&quot;v6&quot;, &quot;20010db8be0000000000000000000000&quot;, 48, &quot;cust1&quot;]
+
+  ip2 = IP.new([&quot;v6&quot;, &quot;20010db8be0000000000000000000000&quot;, 48, &quot;cust1&quot;])
+  ip1 == ip2   # true
+</pre>
+</li>
+<li>Addresses are Comparable, sortable, and can be used as Hash keys
+
+</li>
+</ul>
+<h2>Why not IPAddr?</h2>
+<p>
+Ruby bundles an IPAddr class (ipaddr.rb). However there are a number of
+serious problems with this library.
+</p>
+<ol>
+<li>Given an <a href="../classes/IP.html">IP</a> address with a netmask or
+prefix (e.g. 192.0.2.0/24) it&#8216;s very hard to get access to the
+netmask part. It involves digging around instance variables.
+
+</li>
+<li>It&#8216;s impossible to deal with an off-base address with prefix, because
+IPAddr forcibly masks it to the base. e.g. 192.0.2.53/24 is stored as
+192.0.2.0/24
+
+</li>
+<li>IPAddr uses calls to the socket library to validate <a
+href="../classes/IP.html">IP</a> addresses, and this can trigger spurious
+DNS lookups when given an invalid <a href="../classes/IP.html">IP</a>
+address. ruby-ip does not depend on the socket library at all, unless you
+require &#8216;ip/socket&#8217; to have access to the Socket::AF_INET and
+Socket::AF_INET6 constants.
+
+</li>
+</ol>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
