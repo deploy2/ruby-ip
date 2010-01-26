@@ -48,8 +48,9 @@ class IP
   #   IP::V4.new(0x01020304, 28, "routing_context")
   def initialize(addr, pfxlen=nil, ctx=nil)
     @addr = addr.is_a?(String) ? addr.to_i(16) : addr.to_i
-    @pfxlen = pfxlen || self.class::ADDR_BITS
-    @ctx = ctx
+    raise ArgumentError, "Invalid address value" if @addr < 0 || @addr > self.class::MASK
+    self.pfxlen = pfxlen
+    self.ctx = ctx
   end
 
   # Return the protocol in string form, "v4" or "v6"  
@@ -99,8 +100,14 @@ class IP
 
   # Change the prefix length. If nil, the maximum is used (32 or 128)  
   def pfxlen=(pfxlen)
-    @pfxlen = pfxlen || self.class::ADDR_BITS
     @mask = nil
+    if pfxlen
+      pfxlen = pfxlen.to_i
+      raise ArgumentError, "Invalid prefix length" if pfxlen < 0 || pfxlen > self.class::ADDR_BITS
+      @pfxlen = pfxlen
+    else
+      @pfxlen = self.class::ADDR_BITS
+    end
   end
 
   # Return the mask for this pfxlen as an integer. For example,
@@ -279,12 +286,15 @@ class IP
       when /\A\[?::(ffff:)?(\d+\.\d+\.\d+\.\d+)\]?(?:\/(\d+))?(?:@(.*))?\z/i
         mapped = $1
         pfxlen = ($3 || 128).to_i
+        ctx = $4
+        return nil if pfxlen > 128
         v4 = (V4.parse($2) || return).to_i
         v4 |= 0xffff00000000 if mapped
-        new(v4, pfxlen, $4)
+        new(v4, pfxlen, ctx)
       when /\A\[?([0-9a-f:]+)\]?(?:\/(\d+))?(?:@(.*))?\z/i
         addr = $1
         pfxlen = ($2 || 128).to_i
+        return nil if pfxlen > 128
         ctx = $3
         return nil if pfxlen > 128
         if addr =~ /\A(.*?)::(.*)\z/

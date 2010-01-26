@@ -66,6 +66,15 @@ class IPTest < Test::Unit::TestCase
       assert_equal s1, s2
       assert_not_equal s1.object_id, s2.object_id
     end
+
+    should "disallow invalid addr" do
+      assert_raises(ArgumentError) { IP::V4.new(1 << 32) }
+      assert_raises(ArgumentError) { IP::V4.new(-1) }
+    end
+    
+    should "disallow invalid pfxlen" do
+      assert_raises(ArgumentError) { IP.new("1.2.3.4/33") }
+    end
     
     context "address not on subnet boundary" do
       setup do
@@ -199,6 +208,7 @@ class IPTest < Test::Unit::TestCase
         @addr.pfxlen = 29
         assert_equal 0xfffffff8, @addr.netmask.to_i
         assert_equal "1.2.3.4/29@foo", @addr.to_s
+        assert_raises(ArgumentError) { @addr.pfxlen = 33 }
       end
 
       should "have native" do
@@ -310,6 +320,29 @@ class IPTest < Test::Unit::TestCase
       assert_equal "dead:beef::123/24@foo", res.to_s
       assert_equal 24, res.pfxlen
       assert_equal "foo", res.ctx
+    end
+    
+    should "build from another IP" do
+      s1 = IP.new("dead:beef::123/48@foo")
+      s2 = IP.new(s1)
+      assert_equal s1, s2
+      assert_not_equal s1.object_id, s2.object_id
+    end
+    
+    should "disallow invalid addr" do
+      assert_raises(ArgumentError) { IP::V6.new(1 << 128) }
+      assert_raises(ArgumentError) { IP::V6.new(-1) }
+    end
+    
+    should "disallow invalid pfxlen" do
+      assert_raises(ArgumentError) { IP.new("dead:beef::123/129@foo") }
+    end
+    
+    should "have pfxlen writer" do
+      res = IP::V6.new(0xdeadbeef000000000000000000000123, 24, "foo")
+      res.pfxlen = 120
+      assert_equal "dead:beef::123/120@foo", res.to_s
+      assert_raises(ArgumentError) { res.pfxlen = 129 }
     end
     
     should "have native" do
