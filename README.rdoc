@@ -97,3 +97,8 @@ serious problems with this library.
    require 'ip/socket' to have access to the Socket::AF_INET and
    Socket::AF_INET6 constants.
 
+== Copying
+
+You may use, distribute and modify this software under the same terms as
+ruby itself (see LICENSE.txt and COPYING.txt)
+
