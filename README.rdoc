@@ -1,6 +1,14 @@
-== ruby-ip library
+= ruby-ip library
 
-This is a library for manipulating IP addresses. Feature overview:
+This is a library for manipulating IP addresses.
+
+== Installation
+
+Gem:: <tt>gem install ruby-ip</tt>
+Source:: <tt>git clone git://github.com/deploy2/ruby-ip.git</tt>
+Docs:: http://deploy2.github.com/ruby-ip/
+
+== Feature overview
 
 * Create from string and to string
 
