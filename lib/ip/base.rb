@@ -328,11 +328,15 @@ class IP
         "::#{native.to_addr}"
       elsif ipv4_mapped?
         "::ffff:#{native.to_addr}"
+      elsif @addr.zero?
+        "::"
       else
         res = to_hex.scan(/..../).join(':')
         res.gsub!(/\b0{1,3}/,'')
-        res.gsub!(/(\A|:)(0:)+/,'::')
-        res.gsub!(/::0\z/, '::')
+        res.sub!(/\b0:0:0:0(:0)*\b/,':') ||
+          res.sub!(/\b0:0:0\b/,':') ||
+          res.sub!(/\b0:0\b/,':')
+        res.sub!(/:::+/,'::')
         res
       end
     end

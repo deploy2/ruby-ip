@@ -419,6 +419,11 @@ class IPTest < Test::Unit::TestCase
     end
   end
 
+  should "convert v6 addresses unambiguously" do
+    assert_equal "1:0:2::", IP.new('1:0:2:0:0:0:0:0').to_s
+    assert_equal "1::2:0", IP.new('1:0:0:0:0:0:2:0').to_s
+  end
+  
   context "comparing" do
     setup do
       @a1 = IP.new("1.2.3.4")
