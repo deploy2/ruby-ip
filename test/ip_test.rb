@@ -472,6 +472,15 @@ class IPTest < Test::Unit::TestCase
     end
   end
 
+  context "range between two IPs" do
+    should "be able to iterate" do
+      r = IP.new("10.0.0.6")..IP.new("10.0.0.8")
+      a = []
+      r.each { |x| a << x.to_s }
+      assert_equal ["10.0.0.6","10.0.0.7","10.0.0.8"], a
+    end
+  end
+  
   PARSE_TESTS = [
     # ipv4
     [["v4", 0x01020304, 32],				"1.2.3.4"],

@@ -211,8 +211,12 @@ class IP
     self.class.new(~@addr & self.class::MASK, @pfxlen, @ctx)
   end
 
+  def succ
+    self.class.new(@addr + size, @pfxlen, @ctx)
+  end
+
   def succ!
-    @addr += 1
+    @addr += size
     self
   end
 
