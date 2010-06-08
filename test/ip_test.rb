@@ -121,8 +121,12 @@ class IPTest < Test::Unit::TestCase
         assert_equal "v4", @addr.proto
       end
       
+      should "have to_irange" do
+        assert_equal((0x01020300 .. 0x010203ff), @addr.to_irange)
+      end
+      
       should "have to_range" do
-        assert_equal((0x01020300 .. 0x010203ff), @addr.to_range)
+        assert_equal IP.new("1.2.3.0@foo")..IP.new("1.2.3.255@foo"), @addr.to_range
       end
       
       should "have size" do

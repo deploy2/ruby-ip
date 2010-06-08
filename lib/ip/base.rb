@@ -175,10 +175,17 @@ class IP
     self
   end
   
-  def to_range
+  def to_irange
     a1 = @addr & ~mask
     a2 = a1 | mask
     (a1..a2)
+  end
+
+  # QUERY: IPAddr (1.9) turns 1.2.3.0/24 into 1.2.3.0/24..1.2.3.255/24
+  # Here I turn it into 1.2.3.0..1.2.3.255. Which is better?
+  def to_range
+    self.class.new(@addr & ~mask, self.class::ADDR_BITS, @ctx) ..
+    self.class.new(@addr | mask, self.class::ADDR_BITS, @ctx)
   end
 
   # The number of IP addresses in subnet
