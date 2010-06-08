@@ -483,6 +483,16 @@ class IPTest < Test::Unit::TestCase
       r.each { |x| a << x.to_s }
       assert_equal ["10.0.0.6","10.0.0.7","10.0.0.8"], a
     end
+
+    should "iterate when prefix present" do
+      # Spec question: should this increment in blocks of /30 or single IPs?
+      # Iteration of single IPs is not really useful for v6; but then again,
+      # having an off-base start IP isn't really useful either.
+      r = IP.new("10.0.0.6/30")..IP.new("10.0.0.11/29")
+      a = []
+      r.each { |x| a << x.to_s }
+      assert_equal ["10.0.0.6/30","10.0.0.10/30"], a
+    end
   end
   
   PARSE_TESTS = [
