@@ -247,6 +247,11 @@ class IP
     to_a.hash
   end
 
+  def freeze
+    mask
+    super
+  end
+
   def eql?(other)
     to_a.eql?(other.to_a)
   end

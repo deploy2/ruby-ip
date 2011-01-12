@@ -476,6 +476,36 @@ class IPTest < Test::Unit::TestCase
     end
   end
 
+  context "freezing" do
+    setup do
+      @addr = IP.new('1.2.3.4/24@foo').freeze
+    end
+
+    should "be able to get values without a TypeError" do
+      assert_nothing_raised(TypeError) do
+        @addr.to_s
+        @addr.to_addrlen
+        @addr.to_addr
+        @addr.to_i
+        @addr.to_a
+        @addr.to_ah
+        @addr.to_hex
+        @addr.pfxlen
+        @addr.proto
+        @addr.to_irange
+        @addr.to_range
+        @addr.size
+        @addr.ctx
+        @addr.network
+        @addr.broadcast
+        @addr.mask
+        @addr.netmask
+        @addr.wildmask
+        @addr.offset
+      end
+    end
+  end
+
   context "range between two IPs" do
     should "be able to iterate" do
       r = IP.new("10.0.0.6")..IP.new("10.0.0.8")
