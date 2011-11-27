@@ -1,5 +1,10 @@
 require 'rake/clean'
 
+task :gem => :build
+task :build do
+  system "gem build ruby_ip.gemspec"
+end
+
 #### TESTING ####
 require 'rake/testtask'
 task :default => :test
@@ -24,7 +29,7 @@ rescue LoadError
 end
 
 #### DOCUMENTATION ####
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new { |rdoc|
   rdoc.rdoc_dir = 'doc/rdoc'
   rdoc.template = ENV['template'] if ENV['template']
