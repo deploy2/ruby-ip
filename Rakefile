@@ -2,7 +2,7 @@ require 'rake/clean'
 
 task :gem => :build
 task :build do
-  system "gem build ruby_ip.gemspec"
+  system "gem build ruby-ip.gemspec"
 end
 
 #### TESTING ####
