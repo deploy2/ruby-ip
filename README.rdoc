@@ -18,6 +18,7 @@ Docs:: http://deploy2.github.com/ruby-ip/
     ip.to_i       # 3221226037
     ip.to_hex     # "c0000235"
     ip.to_addr    # "192.0.2.53"
+    ip.to_arpa    # "53.2.0.192.in-addr.arpa."
     ip.pfxlen     # 24
 
 * Qualify IP address with "routing context" (VRF)
