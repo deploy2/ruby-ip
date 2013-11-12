@@ -194,20 +194,7 @@ class IP
   def is_in?(subnet)
     return subnet.to_range.include?(self)
   end
-
-  # subdivide a larger subnet into smaller subnets by number of subnets
-  def divide_by_subnets(number_subnets)
-    nets = Array.new
-    nets << self
-    while number_subnets >= nets.length && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
-      new_nets = Array.new
-      nets.each do |net|
-        new_nets = new_nets | net.split
-      end
-      nets = new_nets
-    end
-    return nets
-  end
+  #this function sub-divides a subnet into two subnets of equal size
   def split
     nets = Array.new
     if self.pfxlen < self.class::ADDR_BITS
@@ -222,9 +209,34 @@ class IP
     end
     return nets
   end
+
+  # subdivide a larger subnet into smaller subnets by number of subnets, 
+  # stop when subnets reach their smallest possible size (i.e. 31 for IP4)
+  def divide_by_subnets(number_subnets)
+    nets = Array.new
+    nets << self
+    while number_subnets >= nets.length && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+      new_nets = Array.new
+      nets.each do |net|
+        new_nets = new_nets | net.split
+      end
+      nets = new_nets
+    end
+    return nets
+  end
+  
   # subdivide a larger subnet into smaller subnets by number of hosts
   def divide_by_hosts(number_hosts)
-
+    nets = Array.new
+    nets << self
+    while number_hosts <= (nets[0].split[0].size + 2) && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+      new_nets = Array.new
+      nets.each do |net|
+        new_nets = new_nets | net.split
+      end
+      nets = new_nets
+    end
+    return nets
   end
 
   # The number of IP addresses in subnet
