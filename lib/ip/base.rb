@@ -76,7 +76,10 @@ class IP
   def to_i
     @addr
   end
-
+  # returns the address in Binary
+  def to_b
+    @addr.to_s(2).to_i
+  end
   # Return the address as a hexadecimal string (8 or 32 digits)
   def to_hex
     @addr.to_s(16).rjust(self.class::ADDR_BITS>>2,"0")
@@ -186,6 +189,36 @@ class IP
   def to_range
     self.class.new(@addr & ~mask, self.class::ADDR_BITS, @ctx) ..
     self.class.new(@addr | mask, self.class::ADDR_BITS, @ctx)
+  end
+  # test if the address is in the provided subnet
+  def is_in?(subnet)
+    return subnet.to_range.include?(self)
+  end
+
+  # subdivide a larger subnet into smaller subnets by number of subnets
+  def divide_by_subnets(number_subnets)
+    nets = Array.new
+    nets << self
+    while number_subnets >= nets.length
+      new_nets = Array.new
+      nets.each do |net|
+        new_nets = new_nets | net.split
+      end
+      nets = new_nets
+    end
+    return nets
+  end
+  def split
+    nets = Array.new
+    if self.pfxlen < 32
+      new_base = IP.new("#{self.network.to_addr}/#{self.pfxlen+1}")
+      nets = [new_base, IP.new("#{(new_base.to_range.last + 1).to_addr}/#{self.pfxlen+1}")]
+    end
+    return nets
+  end
+  # subdivide a larger subnet into smaller subnets by number of hosts
+  def divide_by_hosts(number_hosts)
+
   end
 
   # The number of IP addresses in subnet
