@@ -199,7 +199,7 @@ class IP
   def divide_by_subnets(number_subnets)
     nets = Array.new
     nets << self
-    while number_subnets >= nets.length
+    while number_subnets >= nets.length && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
       new_nets = Array.new
       nets.each do |net|
         new_nets = new_nets | net.split
@@ -210,9 +210,15 @@ class IP
   end
   def split
     nets = Array.new
-    if self.pfxlen < 32
-      new_base = IP.new("#{self.network.to_addr}/#{self.pfxlen+1}")
-      nets = [new_base, IP.new("#{(new_base.to_range.last + 1).to_addr}/#{self.pfxlen+1}")]
+    if self.pfxlen < self.class::ADDR_BITS
+      if self.class::ADDR_BITS == 32
+        new_base = IP::V4.new(self.network.to_i, (self.pfxlen + 1))
+        nets = [new_base, IP::V4.new((new_base.broadcast + 1).to_i, (self.pfxlen + 1))]
+      end
+      if self.class::ADDR_BITS == 128
+        new_base = IP::V6.new(self.network.to_i, (self.pfxlen + 1))
+        nets = [new_base, IP::V6.new((new_base.broadcast + 1).to_i, (self.pfxlen + 1))]
+      end
     end
     return nets
   end
