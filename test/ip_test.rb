@@ -9,6 +9,7 @@ class IPTest < Test::Unit::TestCase
       assert_equal "1.2.3.4/26", res.to_s
       assert_equal "1.2.3.4/26", res.to_addrlen
       assert_equal 0x01020304, res.to_i
+      assert_equal 1000000100000001100000100, res.to_b
       assert_equal 26, res.pfxlen
       assert_nil res.ctx
     end
@@ -131,6 +132,31 @@ class IPTest < Test::Unit::TestCase
       
       should "have to_range" do
         assert_equal IP.new("1.2.3.0@foo")..IP.new("1.2.3.255@foo"), @addr.to_range
+      end
+
+      should "have is_in?" do
+        assert_equal IP.new("1.2.3.1/32").is_in?(IP.new("1.2.3.0/24")), true
+      end
+
+      should "have split" do
+        assert_equal IP.new("1.2.3.0/24").split, [IP.new("1.2.3.0/25"), IP.new("1.2.3.128/25")]
+      end
+
+      should "have divide_by_subnets be exact" do
+        assert_equal IP.new("1.2.3.0/24").divide_by_subnets(4), [IP.new("1.2.3.0/26"), IP.new("1.2.3.64/26"),IP.new("1.2.3.128/26"), IP.new("1.2.3.192/26")]
+      end
+
+      should "have divide_by_subnets choose next largest" do
+        assert_equal IP.new("1.2.3.0/24").divide_by_subnets(3), [IP.new("1.2.3.0/26"), IP.new("1.2.3.64/26"),IP.new("1.2.3.128/26"), IP.new("1.2.3.192/26")]
+      end
+      should "have divide_by_hosts subnet boundary" do
+        assert_equal IP.new("1.2.3.0/24").divide_by_hosts(128), [IP.new("1.2.3.0/24")]
+      end
+      should "have divide_by_hosts full subnet" do
+        assert_equal IP.new("1.2.3.0/24").divide_by_hosts(126), [IP.new("1.2.3.0/25"), IP.new("1.2.3.128/25")]
+      end
+      should "have divide_by_hosts partial subnet" do
+        assert_equal IP.new("1.2.3.0/24").divide_by_hosts(68), [IP.new("1.2.3.0/25"), IP.new("1.2.3.128/25")]
       end
       
       should "have size" do
@@ -492,6 +518,8 @@ class IPTest < Test::Unit::TestCase
         @addr.to_addr
         @addr.to_arpa
         @addr.to_i
+        @addr.to_b
+        @addr.split
         @addr.to_a
         @addr.to_ah
         @addr.to_hex
