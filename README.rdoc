@@ -70,9 +70,14 @@ Docs:: http://deploy2.github.com/ruby-ip/
 
 * Advanced Subnet Math
     ip = IP.new('192.168.0.0/24')
-    ip.split                    [#<IP::V4 192.168.0.0/25>, #<IP::V4 192.168.0.128/25>] (2 evenly divided subnets)
-    ip.divide_by_subnets(3)     [#<IP::V4 192.168.0.0/26>, #<IP::V4 192.168.0.64/26>, #<IP::V4 192.168.0.128/26>, #<IP::V4 192.168.0.192/26>] (4 evenly divided subnets)
-    ip.divide_by_hosts(100)     [#<IP::V4 192.168.0.0/25>, #<IP::V4 192.168.0.128/25>] (128 hosts each)      
+    ip.split                    [#<IP::V4 192.168.0.0/25>, 
+                                #<IP::V4 192.168.0.128/25>] (2 evenly divided subnets)
+    ip.divide_by_subnets(3)     [#<IP::V4 192.168.0.0/26>, 
+                                #<IP::V4 192.168.0.64/26>, 
+                                #<IP::V4 192.168.0.128/26>, 
+                                #<IP::V4 192.168.0.192/26>] (4 evenly divided subnets)
+    ip.divide_by_hosts(100)     [#<IP::V4 192.168.0.0/25>, 
+                                #<IP::V4 192.168.0.128/25>] (128 hosts each)      
 
 * Convert to and from a compact Array representation
 
