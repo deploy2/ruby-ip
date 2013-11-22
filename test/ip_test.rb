@@ -93,6 +93,10 @@ class IPTest < Test::Unit::TestCase
         assert_equal "1.2.3.4", @addr.to_addr
       end
       
+      should "have to_arpa" do
+        assert_equal "4.3.2.1.in-addr.arpa.", @addr.to_arpa
+      end
+
       should "have to_i" do
         assert_equal 0x01020304, @addr.to_i
       end
@@ -486,6 +490,7 @@ class IPTest < Test::Unit::TestCase
         @addr.to_s
         @addr.to_addrlen
         @addr.to_addr
+        @addr.to_arpa
         @addr.to_i
         @addr.to_a
         @addr.to_ah

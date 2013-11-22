@@ -286,6 +286,11 @@ class IP
       sprintf("%d.%d.%d.%d",
         (@addr>>24)&0xff, (@addr>>16)&0xff, (@addr>>8)&0xff, @addr&0xff)
     end
+    #return the arpa version of the address for reverse DNS: http://en.wikipedia.org/wiki/Reverse_DNS_lookup
+    def to_arpa
+      sprintf("%d.%d.%d.%d.in-addr.arpa.",
+        @addr&0xff, (@addr>>8)&0xff, (@addr>>16)&0xff,(@addr>>24)&0xff)
+    end
   end
   
   class V6 < IP
@@ -355,6 +360,23 @@ class IP
         res.sub!(/:::+/,'::')
         res
       end
+    end
+
+    # Return just the address in non-compact form, required for reverse IP.
+    def to_addr_full
+      if ipv4_compat?
+        "::#{native.to_addr}"
+      elsif ipv4_mapped?
+        "::ffff:#{native.to_addr}"
+      elsif @addr.zero?
+        "::"
+      else
+        return to_hex.scan(/..../).join(':')
+      end
+    end
+    #return the arpa version of the address for reverse DNS: http://en.wikipedia.org/wiki/Reverse_DNS_lookup
+    def to_arpa
+      return self.to_addr_full.reverse.gsub(':','').split(//).join('.') + ".ip6.arpa"
     end
 
     def ipv4_mapped?
