@@ -76,7 +76,10 @@ class IP
   def to_i
     @addr
   end
-
+  # returns the address in Binary
+  def to_b
+    @addr.to_s(2).to_i
+  end
   # Return the address as a hexadecimal string (8 or 32 digits)
   def to_hex
     @addr.to_s(16).rjust(self.class::ADDR_BITS>>2,"0")
@@ -186,6 +189,54 @@ class IP
   def to_range
     self.class.new(@addr & ~mask, self.class::ADDR_BITS, @ctx) ..
     self.class.new(@addr | mask, self.class::ADDR_BITS, @ctx)
+  end
+  # test if the address is in the provided subnet
+  def is_in?(subnet)
+    return subnet.to_range.include?(self)
+  end
+  #this function sub-divides a subnet into two subnets of equal size
+  def split
+    nets = Array.new
+    if self.pfxlen < self.class::ADDR_BITS
+      if self.class::ADDR_BITS == 32
+        new_base = IP::V4.new(self.network.to_i, (self.pfxlen + 1))
+        nets = [new_base, IP::V4.new((new_base.broadcast + 1).to_i, (self.pfxlen + 1))]
+      end
+      if self.class::ADDR_BITS == 128
+        new_base = IP::V6.new(self.network.to_i, (self.pfxlen + 1))
+        nets = [new_base, IP::V6.new((new_base.broadcast + 1).to_i, (self.pfxlen + 1))]
+      end
+    end
+    return nets
+  end
+
+  # subdivide a larger subnet into smaller subnets by number of subnets of equal size, 
+  # stop when subnets reach their smallest possible size (i.e. 31 for IP4)
+  def divide_by_subnets(number_subnets)
+    nets = Array.new
+    nets << self
+    begin
+      new_nets = Array.new
+      nets.each do |net|
+        new_nets = new_nets | net.split
+      end
+      nets = new_nets
+    end until number_subnets <= nets.length && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+    return nets
+  end
+  
+  # subdivide a larger subnet into smaller subnets by number of hosts
+  def divide_by_hosts(number_hosts)
+    nets = Array.new
+    nets << self
+    while number_hosts <= (nets[0].split[0].size - 2) && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+      new_nets = Array.new
+      nets.each do |net|
+        new_nets = new_nets | net.split
+      end
+      nets = new_nets
+    end
+    return nets
   end
 
   # The number of IP addresses in subnet

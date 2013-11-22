@@ -16,6 +16,7 @@ Docs:: http://deploy2.github.com/ruby-ip/
     ip = IP.new("192.0.2.53/24")
     ip.to_s       # "192.0.2.53/24"
     ip.to_i       # 3221226037
+    ip.to_b       # 11000000000000000000001000110101
     ip.to_hex     # "c0000235"
     ip.to_addr    # "192.0.2.53"
     ip.to_arpa    # "53.2.0.192.in-addr.arpa."
@@ -67,6 +68,23 @@ Docs:: http://deploy2.github.com/ruby-ip/
     ip | 7             #<IP::V4 192.0.2.55/24>
     ip ^ 7             #<IP::V4 192.0.2.50/24>
     ~ip                #<IP::V4 63.255.253.202/24>
+
+* Advanced Subnet Operations
+    sn = IP.new('192.168.0.0/24')
+    ip = IP.new('192.168.0.48/32')
+    sn.split                    [#<IP::V4 192.168.0.0/25>, 
+                                #<IP::V4 192.168.0.128/25>] (2 evenly divided subnets)
+    sn.divide_by_subnets(3)     [#<IP::V4 192.168.0.0/26>, 
+                                #<IP::V4 192.168.0.64/26>, 
+                                #<IP::V4 192.168.0.128/26>, 
+                                #<IP::V4 192.168.0.192/26>] (4 evenly divided subnets)
+    #keep in mind this always takes into account a network and broadcast address
+    sn.divide_by_hosts(100)     [#<IP::V4 192.168.0.0/25>, 
+                                #<IP::V4 192.168.0.128/25>] (128 hosts each)
+    ip = IP.new('192.168.0.48/32')
+    ip.is_in?(sn)
+    => true 
+    
 
 * Convert to and from a compact Array representation
 
