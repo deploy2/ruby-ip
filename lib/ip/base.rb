@@ -246,23 +246,23 @@ class IP
   end
 
   def +(other)
-    self.class.new(@addr + other.to_int, @pfxlen, @ctx)
+    self.class.new(@addr + other.to_i, @pfxlen, @ctx)
   end
 
   def -(other)
-    self.class.new(@addr - other.to_int, @pfxlen, @ctx)
+    self.class.new(@addr - other.to_i, @pfxlen, @ctx)
   end
 
   def &(other)
-    self.class.new(@addr & other.to_int, @pfxlen, @ctx)
+    self.class.new(@addr & other.to_i, @pfxlen, @ctx)
   end
 
   def |(other)
-    self.class.new(@addr | other.to_int, @pfxlen, @ctx)
+    self.class.new(@addr | other.to_i, @pfxlen, @ctx)
   end
 
   def ^(other)
-    self.class.new(@addr ^ other.to_int, @pfxlen, @ctx)
+    self.class.new(@addr ^ other.to_i, @pfxlen, @ctx)
   end
 
   def ~

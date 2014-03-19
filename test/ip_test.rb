@@ -76,7 +76,22 @@ class IPTest < Test::Unit::TestCase
     should "disallow invalid pfxlen" do
       assert_raises(ArgumentError) { IP.new("1.2.3.4/33") }
     end
-    
+
+    context "ip math" do
+      setup do
+        @addr1 = IP.new("1.2.3.4/24@foo")
+        @addr2 = IP.new("1.2.3.5/24@foo")
+      end
+
+      should "add to ip address" do
+        assert_equal @addr2, (@addr1 + 1)
+      end
+
+      should "subtract from ip address" do
+        assert_equal @addr1, (@addr2 - 1)
+      end
+    end
+
     context "address not on subnet boundary" do
       setup do
         @addr = IP.new("1.2.3.4/24@foo")
