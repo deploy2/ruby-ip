@@ -150,6 +150,10 @@ class IPTest < Test::Unit::TestCase
       end
 
       should "have is_in?" do
+        assert_equal IP.new("1.2.3.0/25").is_in?(IP.new("1.2.3.0/24")), true
+      end
+      
+      should "handle is_in? for subnets" do
         assert_equal IP.new("1.2.3.1/32").is_in?(IP.new("1.2.3.0/24")), true
       end
 

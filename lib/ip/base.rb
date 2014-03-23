@@ -192,7 +192,8 @@ class IP
   end
   # test if the address is in the provided subnet
   def is_in?(subnet)
-    return subnet.to_range.include?(self)
+    return subnet.network.to_i <= self.network.to_i &&
+      subnet.broadcast.to_i >= self.broadcast.to_i
   end
   #this function sub-divides a subnet into two subnets of equal size
   def split
