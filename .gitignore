@@ -9,3 +9,4 @@ coverage
 .irbrc
 rerun.txt
 tmp
+Gemfile.lock
