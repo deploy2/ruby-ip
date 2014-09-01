@@ -5,7 +5,7 @@ class IP
   PROTO_TO_CLASS = {}
 
   class << self
-    alias :orig_new :new
+    alias_method :orig_new, :new
     # Examples:
     #   IP.new("1.2.3.4")
     #   IP.new("1.2.3.4/28")
@@ -22,22 +22,23 @@ class IP
     def new(src)
       case src
       when String
-        parse(src) || (raise ArgumentError, "invalid address")
+        parse(src) || (fail ArgumentError, 'invalid address')
       when Array
-        (PROTO_TO_CLASS[src[0]] || (raise ArgumentError, "invalid protocol")).new(*src[1..-1])
+        (PROTO_TO_CLASS[src[0]] ||
+         (fail ArgumentError, 'invalid protocol')).new(*src[1..-1])
       when IP
         src.dup
       else
-        raise ArgumentError, "invalid address"
+        fail ArgumentError, 'invalid address'
       end
     end
-    
+
     # Parse a string as an IP address - return a V4/V6 object or nil
     def parse(str)
       V4.parse(str) || V6.parse(str)
     end
   end
-    
+
   # Length of prefix (network portion) of address
   attr_reader :pfxlen
 
@@ -49,14 +50,16 @@ class IP
   #   IP::V4.new("01020304")
   #   IP::V4.new(0x01020304, 28)
   #   IP::V4.new(0x01020304, 28, "routing_context")
-  def initialize(addr, pfxlen=nil, ctx=nil)
+  def initialize(addr, pfxlen = nil, ctx = nil)
     @addr = addr.is_a?(String) ? addr.to_i(16) : addr.to_i
-    raise ArgumentError, "Invalid address value" if @addr < 0 || @addr > self.class::MASK
+    if @addr < 0 || @addr > self.class::MASK
+      fail ArgumentError, 'Invalid address value'
+    end
     self.pfxlen = pfxlen
     self.ctx = ctx
   end
 
-  # Return the protocol in string form, "v4" or "v6"  
+  # Return the protocol in string form, "v4" or "v6"
   def proto
     self.class::PROTO
   end
@@ -82,7 +85,7 @@ class IP
   end
   # Return the address as a hexadecimal string (8 or 32 digits)
   def to_hex
-    @addr.to_s(16).rjust(self.class::ADDR_BITS>>2,"0")
+    @addr.to_s(16).rjust(self.class::ADDR_BITS >> 2, '0')
   end
 
   # Return an array representation of the address, with 3 or 4 elements
@@ -96,7 +99,7 @@ class IP
   end
 
   # Return an array representation of the address, with 3 or 4 elements
-  # depending on whether there is a routing context set, using hexadecimal.  
+  # depending on whether there is a routing context set, using hexadecimal.
   #    ["v4", "01020304", 28]
   #    ["v4", "01020304", 28, "context"]
   def to_ah
@@ -104,12 +107,14 @@ class IP
            [self.class::PROTO, to_hex, @pfxlen]
   end
 
-  # Change the prefix length. If nil, the maximum is used (32 or 128)  
+  # Change the prefix length. If nil, the maximum is used (32 or 128)
   def pfxlen=(pfxlen)
     @mask = nil
     if pfxlen
       pfxlen = pfxlen.to_i
-      raise ArgumentError, "Invalid prefix length" if pfxlen < 0 || pfxlen > self.class::ADDR_BITS
+      if pfxlen < 0 || pfxlen > self.class::ADDR_BITS
+        fail ArgumentError, 'Invalid prefix length'
+      end
       @pfxlen = pfxlen
     else
       @pfxlen = self.class::ADDR_BITS
@@ -126,15 +131,15 @@ class IP
   # offset applied.
   #    IP.new("1.2.3.4/24").network    =>  #<IP::V4 1.2.3.0/24>
   #    IP.new("1.2.3.4/24").network(7) =>  #<IP::V4 1.2.3.7/24>
-  def network(offset=0)
+  def network(offset = 0)
     self.class.new((@addr & ~mask) + offset, @pfxlen, @ctx)
   end
 
   # Return a new IP object at the top of the subnet, with an optional
-  # offset applied.  
+  # offset applied.
   #    IP.new("1.2.3.4/24").broadcast     =>  #<IP::V4 1.2.3.255/24>
   #    IP.new("1.2.3.4/24").broadcast(-1) =>  #<IP::V4 1.2.3.254/24>
-  def broadcast(offset=0)
+  def broadcast(offset = 0)
     self.class.new((@addr | mask) + offset, @pfxlen, @ctx)
   end
 
@@ -143,13 +148,13 @@ class IP
   def netmask
     self.class.new(self.class::MASK & ~mask)
   end
-  
+
   # Return a new IP object representing the wildmask (inverse netmask)
   #    IP.new("1.2.3.4/24").netmask  =>  #<IP::V4 0.0.0.255>
   def wildmask
     self.class.new(mask)
   end
-  
+
   # Masks the address such that it is the base of the subnet
   #    IP.new("1.2.3.4/24").mask!    => #<IP::V4 1.2.3.0/24>
   def mask!
@@ -163,7 +168,7 @@ class IP
   def offset?
     @addr != (@addr & ~mask)
   end
-  
+
   # Returns offset from base of subnet to this address
   #    IP.new("1.2.3.4/24").offset   => 4
   def offset
@@ -177,7 +182,7 @@ class IP
     self.pfxlen = nil if offset?
     self
   end
-  
+
   def to_irange
     a1 = @addr & ~mask
     a2 = a1 | mask
@@ -192,52 +197,55 @@ class IP
   end
   # test if the address is in the provided subnet
   def is_in?(subnet)
-    return subnet.network.to_i <= self.network.to_i &&
-      subnet.broadcast.to_i >= self.broadcast.to_i
+    subnet.network.to_i <= network.to_i &&
+      subnet.broadcast.to_i >= broadcast.to_i
   end
-  #this function sub-divides a subnet into two subnets of equal size
+  # this function sub-divides a subnet into two subnets of equal size
   def split
-    nets = Array.new
-    if self.pfxlen < self.class::ADDR_BITS
+    nets = []
+    if pfxlen < self.class::ADDR_BITS
       if self.class::ADDR_BITS == 32
-        new_base = IP::V4.new(self.network.to_i, (self.pfxlen + 1))
-        nets = [new_base, IP::V4.new((new_base.broadcast + 1).to_i, (self.pfxlen + 1))]
+        new_base = IP::V4.new(network.to_i, (pfxlen + 1))
+        nets = [new_base, IP::V4.new((new_base.broadcast + 1).to_i, (pfxlen + 1))]
       end
       if self.class::ADDR_BITS == 128
-        new_base = IP::V6.new(self.network.to_i, (self.pfxlen + 1))
-        nets = [new_base, IP::V6.new((new_base.broadcast + 1).to_i, (self.pfxlen + 1))]
+        new_base = IP::V6.new(network.to_i, (pfxlen + 1))
+        nets = [new_base, IP::V6.new((new_base.broadcast + 1).to_i, (pfxlen + 1))]
       end
     end
-    return nets
+    nets
   end
 
-  # subdivide a larger subnet into smaller subnets by number of subnets of equal size, 
+  # subdivide a larger subnet into smaller subnets by number of subnets of equal size,
   # stop when subnets reach their smallest possible size (i.e. 31 for IP4)
   def divide_by_subnets(number_subnets)
-    nets = Array.new
+    nets = []
     nets << self
-    begin
-      new_nets = Array.new
+    loop do
+      new_nets = []
       nets.each do |net|
-        new_nets = new_nets | net.split
+        new_nets |= net.split
       end
       nets = new_nets
-    end until number_subnets <= nets.length && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
-    return nets
+      break if number_subnets <= nets.length &&
+               nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+    end
+    nets
   end
-  
+
   # subdivide a larger subnet into smaller subnets by number of hosts
   def divide_by_hosts(number_hosts)
-    nets = Array.new
+    nets = []
     nets << self
-    while number_hosts <= (nets[0].split[0].size - 2) && nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
-      new_nets = Array.new
+    while number_hosts <= (nets[0].split[0].size - 2) &&
+          nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+      new_nets = []
       nets.each do |net|
         new_nets = new_nets | net.split
       end
       nets = new_nets
     end
-    return nets
+    nets
   end
 
   # The number of IP addresses in subnet
@@ -280,7 +288,7 @@ class IP
   end
 
   def inspect
-    res = "#<#{self.class} #{to_s}>"
+    "#<#{self.class} #{self}>"
   end
 
   def ipv4_mapped?
@@ -314,8 +322,8 @@ class IP
   include Comparable
 
   class V4 < IP
-    class << self; alias :new :orig_new; end
-    PROTO = "v4".freeze
+    class << self; alias_method :new, :orig_new; end
+    PROTO = 'v4'.freeze
     PROTO_TO_CLASS[PROTO] = self
     ADDR_BITS = 32
     MASK = (1 << ADDR_BITS) - 1
@@ -324,30 +332,39 @@ class IP
     # nil otherwise
     def self.parse(str)
       if str =~ /\A(\d+)\.(\d+)\.(\d+)\.(\d+)(?:\/(\d+))?(?:@(.*))?\z/
-        pfxlen = ($5 || ADDR_BITS).to_i
+        pfxlen = (Regexp.last_match[5] || ADDR_BITS).to_i
         return nil if pfxlen > 32
-        addrs = [$1.to_i, $2.to_i, $3.to_i, $4.to_i]
-        return nil if addrs.find { |n| n>255 }
+        addrs = [Regexp.last_match[1].to_i,
+                 Regexp.last_match[2].to_i,
+                 Regexp.last_match[3].to_i,
+                 Regexp.last_match[4].to_i]
+        return nil if addrs.find { |n| n > 255 }
         addr = (((((addrs[0] << 8) | addrs[1]) << 8) | addrs[2]) << 8) | addrs[3]
-        new(addr, pfxlen, $6)
+        new(addr, pfxlen, Regexp.last_match[6])
       end
     end
 
     # Return just the address part as a String in dotted decimal form
     def to_addr
-      sprintf("%d.%d.%d.%d",
-        (@addr>>24)&0xff, (@addr>>16)&0xff, (@addr>>8)&0xff, @addr&0xff)
+      format('%d.%d.%d.%d',
+             (@addr >> 24) & 0xff,
+             (@addr >> 16) & 0xff,
+             (@addr >> 8) & 0xff,
+             @addr & 0xff)
     end
-    #return the arpa version of the address for reverse DNS: http://en.wikipedia.org/wiki/Reverse_DNS_lookup
+    # return the arpa version of the address for reverse DNS: http://en.wikipedia.org/wiki/Reverse_DNS_lookup
     def to_arpa
-      sprintf("%d.%d.%d.%d.in-addr.arpa.",
-        @addr&0xff, (@addr>>8)&0xff, (@addr>>16)&0xff,(@addr>>24)&0xff)
+      format('%d.%d.%d.%d.in-addr.arpa.',
+             @addr & 0xff,
+             (@addr >> 8) & 0xff,
+             (@addr >> 16) & 0xff,
+             (@addr >> 24) & 0xff)
     end
   end
-  
+
   class V6 < IP
-    class << self; alias :new :orig_new; end
-    PROTO = "v6".freeze
+    class << self; alias_method :new, :orig_new; end
+    PROTO = 'v6'.freeze
     PROTO_TO_CLASS[PROTO] = self
     ADDR_BITS = 128
     MASK = (1 << ADDR_BITS) - 1
@@ -360,21 +377,21 @@ class IP
     def self.parse(str)
       case str
       when /\A\[?::(ffff:)?(\d+\.\d+\.\d+\.\d+)\]?(?:\/(\d+))?(?:@(.*))?\z/i
-        mapped = $1
-        pfxlen = ($3 || 128).to_i
-        ctx = $4
+        mapped = Regexp.last_match[1]
+        pfxlen = (Regexp.last_match[3] || 128).to_i
+        ctx = Regexp.last_match[4]
         return nil if pfxlen > 128
-        v4 = (V4.parse($2) || return).to_i
+        v4 = (V4.parse(Regexp.last_match[2]) || return).to_i
         v4 |= 0xffff00000000 if mapped
         new(v4, pfxlen, ctx)
       when /\A\[?([0-9a-f:]+)\]?(?:\/(\d+))?(?:@(.*))?\z/i
-        addr = $1
-        pfxlen = ($2 || 128).to_i
+        addr = Regexp.last_match[1]
+        pfxlen = (Regexp.last_match[2] || 128).to_i
         return nil if pfxlen > 128
-        ctx = $3
+        ctx = Regexp.last_match[3]
         return nil if pfxlen > 128
         if addr =~ /\A(.*?)::(.*)\z/
-          left, right = $1, $2
+          left, right = Regexp.last_match[1], Regexp.last_match[2]
           l = left.split(':')
           r = right.split(':')
           rest = 8 - l.length - r.length
@@ -385,10 +402,16 @@ class IP
           rest = 0
           return nil if l.length != 8
         end
-        out = ""
-        l.each { |quad| return nil if quad.length>4; out << quad.rjust(4,"0") }
-        rest.times { out << "0000" }
-        r.each { |quad| return nil if quad.length>4; out << quad.rjust(4,"0") }
+        out = ''
+        l.each do |quad|
+          return nil if quad.length > 4
+          out << quad.rjust(4, '0')
+        end
+        rest.times { out << '0000' }
+        r.each do |quad|
+          return nil if quad.length > 4
+          out << quad.rjust(4, '0')
+        end
         new(out, pfxlen, ctx)
       else
         nil
@@ -402,14 +425,14 @@ class IP
       elsif ipv4_mapped?
         "::ffff:#{native.to_addr}"
       elsif @addr.zero?
-        "::"
+        '::'
       else
         res = to_hex.scan(/..../).join(':')
-        res.gsub!(/\b0{1,3}/,'')
-        res.sub!(/\b0:0:0:0(:0)*\b/,':') ||
-          res.sub!(/\b0:0:0\b/,':') ||
-          res.sub!(/\b0:0\b/,':')
-        res.sub!(/:::+/,'::')
+        res.gsub!(/\b0{1,3}/, '')
+        res.sub!(/\b0:0:0:0(:0)*\b/, ':') ||
+          res.sub!(/\b0:0:0\b/, ':') ||
+          res.sub!(/\b0:0\b/, ':')
+        res.sub!(/:::+/, '::')
         res
       end
     end
@@ -421,7 +444,7 @@ class IP
       elsif ipv4_mapped?
         "::ffff:#{native.to_addr}"
       elsif @addr.zero?
-        "::"
+        '::'
       else
         return to_hex.scan(/..../).join(':')
       end
