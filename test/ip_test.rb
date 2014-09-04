@@ -413,6 +413,11 @@ class IPTest < Minitest::Test
       res = IP::V6.new(0xdeadbeef000000000000000000000123, 24, "foo")
       assert_equal res, res.native
     end
+
+    it 'has to_arpa' do
+      res = IP.new('dead:beef::123')
+      assert_equal '3.2.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.f.e.e.b.d.a.e.d.ip6.arpa', res.to_arpa
+    end
   end
 
   describe "v6 ::0" do
@@ -427,6 +432,10 @@ class IPTest < Minitest::Test
     it "has native" do
       assert_equal @addr, @addr.native
     end
+
+    it 'has to_arpa' do
+      assert_equal '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
+    end
   end
 
   describe "v6 ::1" do
@@ -440,6 +449,10 @@ class IPTest < Minitest::Test
 
     it "has native" do
       assert_equal @addr, @addr.native
+    end
+
+    it 'has to_arpa' do
+      assert_equal '1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
     end
   end
 
@@ -461,6 +474,10 @@ class IPTest < Minitest::Test
       a2 = @addr.native
       assert_equal "1.2.3.4/24@xxx", a2.to_s
     end
+
+    it 'has to_arpa' do
+      assert_equal '4.0.3.0.2.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
+    end
   end
 
   describe "v6 mapped" do
@@ -480,6 +497,10 @@ class IPTest < Minitest::Test
     it "has native" do
       a2 = @addr.native
       assert_equal "1.2.3.4/24@xxx", a2.to_s
+    end
+
+    it 'has to_arpa' do
+      assert_equal '4.0.3.0.2.0.1.0.f.f.f.f.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
     end
 
     it "converts v6 addresses unambiguously" do
