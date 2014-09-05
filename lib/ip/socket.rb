@@ -9,11 +9,11 @@ class IP
     self.class::AF
   end
 
-  # Convert to a packed sockaddr structure  
-  def to_sockaddr(port=0)
+  # Convert to a packed sockaddr structure
+  def to_sockaddr(port = 0)
     Socket.pack_sockaddr_in(port, to_addr)
   end
-  
+
   class V4
     AF = Socket::AF_INET
     PROTO_TO_CLASS[AF] = self
@@ -22,11 +22,11 @@ class IP
     # fails 32-bit machines with 1.8.6 for addrs >= 0x80000000. There is
     # also no corresponding Socket.pack_sockaddr_in6 we could use for V6.
 
-    #def to_sockaddr(port=0)
+    # def to_sockaddr(port=0)
     #  Socket.pack_sockaddr_in(port, to_i)
-    #end
+    # end
   end
-  
+
   class V6
     AF = Socket::AF_INET6
     PROTO_TO_CLASS[AF] = self
