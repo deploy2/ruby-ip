@@ -426,19 +426,26 @@ class IP
         return to_hex.scan(/..../).join(':')
       end
     end
+
+    # Returns the address broken into an array of 32 nibbles.  Useful for
+    # to_arpa and use in SPF - http://tools.ietf.org/html/rfc7208#section-7.3
+    def to_nibbles
+      to_hex.rjust(32, '0').split(//)
+    end
+
     #return the arpa version of the address for reverse DNS: http://en.wikipedia.org/wiki/Reverse_DNS_lookup
     def to_arpa
-      return self.to_addr_full.reverse.gsub(':','').split(//).join('.') + ".ip6.arpa"
+      to_nibbles.reverse.join('.') + '.ip6.arpa'
     end
 
     def ipv4_mapped?
       (@addr >> 32) == 0xffff
     end
-    
+
     def ipv4_compat?
       @addr > 1 && (@addr >> 32) == 0
     end
-    
+
     # Convert an IPv6 mapped/compat address to a V4 native address
     def native
       return self unless (ipv4_mapped? || ipv4_compat?) && (@pfxlen >= 96)
