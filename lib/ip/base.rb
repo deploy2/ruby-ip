@@ -392,8 +392,8 @@ class IP
         return nil if pfxlen > 128
         if addr =~ /\A(.*?)::(.*)\z/
           left, right = Regexp.last_match[1], Regexp.last_match[2]
-          l = left.split(':')
-          r = right.split(':')
+          l = left.split(':', -1)
+          r = right.split(':', -1)
           rest = 8 - l.length - r.length
           return nil if rest < 0
         else
@@ -404,12 +404,12 @@ class IP
         end
         out = ''
         l.each do |quad|
-          return nil if quad.length > 4
+          return nil unless (1..4).include?(quad.length)
           out << quad.rjust(4, '0')
         end
         rest.times { out << '0000' }
         r.each do |quad|
-          return nil if quad.length > 4
+          return nil unless (1..4).include?(quad.length)
           out << quad.rjust(4, '0')
         end
         new(out, pfxlen, ctx)
