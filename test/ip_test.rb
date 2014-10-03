@@ -150,52 +150,52 @@ class IPTest < Minitest::Test
       end
 
       it 'has is_in?' do
-        assert_equal IP.new('1.2.3.0/25').is_in?(IP.new('1.2.3.0/24')), true
+        assert_equal true, IP.new('1.2.3.0/25').is_in?(IP.new('1.2.3.0/24'))
       end
 
       it 'finds whether an IP is included in a range' do
-        assert_equal IP.new('1.2.3.1').is_in?(IP.new('1.2.3.0/24')), true
+        assert_equal true, IP.new('1.2.3.1').is_in?(IP.new('1.2.3.0/24'))
       end
 
       it 'finds whether an IP is not included a range' do
-        assert_equal IP.new('1.2.4.1').is_in?(IP.new('1.2.3.0/24')), false
+        assert_equal false, IP.new('1.2.4.1').is_in?(IP.new('1.2.3.0/24'))
       end
 
       it 'finds when a subnet is included in a range' do
-        assert_equal IP.new('1.2.3.0/30').is_in?(IP.new('1.2.3.0/24')), true
+        assert_equal true, IP.new('1.2.3.0/30').is_in?(IP.new('1.2.3.0/24'))
       end
 
       it 'finds when a subnet is not included in a range' do
-        assert_equal IP.new('1.2.4.0/30').is_in?(IP.new('1.2.3.0/24')), false
+        assert_equal false, IP.new('1.2.4.0/30').is_in?(IP.new('1.2.3.0/24'))
       end
 
       it 'has split' do
-        assert_equal IP.new('1.2.3.0/24').split,
-                     [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')]
+        assert_equal [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')],
+                     IP.new('1.2.3.0/24').split
       end
 
       it 'has divide_by_subnets be exact' do
-        assert_equal IP.new('1.2.3.0/24').divide_by_subnets(4),
-                     [IP.new('1.2.3.0/26'), IP.new('1.2.3.64/26'),
-                      IP.new('1.2.3.128/26'), IP.new('1.2.3.192/26')]
+        assert_equal [IP.new('1.2.3.0/26'), IP.new('1.2.3.64/26'),
+                      IP.new('1.2.3.128/26'), IP.new('1.2.3.192/26')],
+                     IP.new('1.2.3.0/24').divide_by_subnets(4)
       end
 
       it 'has divide_by_subnets choose next largest' do
-        assert_equal IP.new('1.2.3.0/24').divide_by_subnets(3),
-                     [IP.new('1.2.3.0/26'), IP.new('1.2.3.64/26'),
-                      IP.new('1.2.3.128/26'), IP.new('1.2.3.192/26')]
+        assert_equal [IP.new('1.2.3.0/26'), IP.new('1.2.3.64/26'),
+                      IP.new('1.2.3.128/26'), IP.new('1.2.3.192/26')],
+                     IP.new('1.2.3.0/24').divide_by_subnets(3)
       end
       it 'has divide_by_hosts subnet boundary' do
-        assert_equal IP.new('1.2.3.0/24').divide_by_hosts(128),
-                     [IP.new('1.2.3.0/24')]
+        assert_equal [IP.new('1.2.3.0/24')],
+                     IP.new('1.2.3.0/24').divide_by_hosts(128)
       end
       it 'has divide_by_hosts full subnet' do
-        assert_equal IP.new('1.2.3.0/24').divide_by_hosts(126),
-                     [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')]
+        assert_equal [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')],
+                     IP.new('1.2.3.0/24').divide_by_hosts(126)
       end
       it 'has divide_by_hosts partial subnet' do
-        assert_equal IP.new('1.2.3.0/24').divide_by_hosts(68),
-                     [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')]
+        assert_equal [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')],
+                     IP.new('1.2.3.0/24').divide_by_hosts(68)
       end
 
       it 'has size' do
@@ -572,92 +572,92 @@ class IPTest < Minitest::Test
     end
 
     it 'responds to to_s withouth a TypeError' do
-      assert_equal @addr.to_s, '1.2.3.4/24@foo'
+      assert_equal '1.2.3.4/24@foo', @addr.to_s
     end
 
     it 'responds to to_addrlen withouth a TypeError' do
-      assert_equal @addr.to_addrlen, '1.2.3.4/24'
+      assert_equal '1.2.3.4/24', @addr.to_addrlen
     end
 
     it 'responds to to_addr withouth a TypeError' do
-      assert_equal @addr.to_addr, '1.2.3.4'
+      assert_equal '1.2.3.4', @addr.to_addr
     end
 
     it 'responds to to_arpa withouth a TypeError' do
-      assert_equal @addr.to_arpa, '4.3.2.1.in-addr.arpa.'
+      assert_equal '4.3.2.1.in-addr.arpa.', @addr.to_arpa
     end
 
     it 'responds to to_i withouth a TypeError' do
-      assert_equal @addr.to_i, 16_909_060
+      assert_equal 16_909_060, @addr.to_i
     end
 
     it 'responds to to_b withouth a TypeError' do
-      assert_equal @addr.to_b, 1_000_000_100_000_001_100_000_100
+      assert_equal 1_000_000_100_000_001_100_000_100, @addr.to_b
     end
 
     it 'responds to split withouth a TypeError' do
-      assert_equal @addr.split, [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')]
+      assert_equal [IP.new('1.2.3.0/25'), IP.new('1.2.3.128/25')], @addr.split
     end
 
     it 'responds to to_a withouth a TypeError' do
-      assert_equal @addr.to_a, ['v4', 16_909_060, 24, 'foo']
+      assert_equal ['v4', 16_909_060, 24, 'foo'], @addr.to_a
     end
 
     it 'responds to to_ah withouth a TypeError' do
-      assert_equal @addr.to_ah, ['v4', '01020304', 24, 'foo']
+      assert_equal ['v4', '01020304', 24, 'foo'], @addr.to_ah
     end
 
     it 'responds to to_hex withouth a TypeError' do
-      assert_equal @addr.to_hex, '01020304'
+      assert_equal '01020304', @addr.to_hex
     end
 
     it 'responds to pfxlen withouth a TypeError' do
-      assert_equal @addr.pfxlen, 24
+      assert_equal 24, @addr.pfxlen
     end
 
     it 'responds to proto withouth a TypeError' do
-      assert_equal @addr.proto, 'v4'
+      assert_equal 'v4', @addr.proto
     end
 
     it 'responds to to_irange withouth a TypeError' do
-      assert_equal @addr.to_irange, 16_909_056..16_909_311
+      assert_equal 16_909_056..16_909_311, @addr.to_irange
     end
 
     it 'responds to to_range withouth a TypeError' do
-      assert_equal @addr.to_range,
-                   IP.new('1.2.3.0@foo')..IP.new('1.2.3.255@foo')
+      assert_equal IP.new('1.2.3.0@foo')..IP.new('1.2.3.255@foo'),
+                   @addr.to_range
     end
 
     it 'responds to size withouth a TypeError' do
-      assert_equal @addr.size, 256
+      assert_equal 256, @addr.size
     end
 
     it 'responds to ctx withouth a TypeError' do
-      assert_equal @addr.ctx, 'foo'
+      assert_equal 'foo', @addr.ctx
     end
 
     it 'responds to network without a TypeError' do
-      assert_equal @addr.network, IP.new('1.2.3.0/24@foo')
+      assert_equal IP.new('1.2.3.0/24@foo'), @addr.network
     end
 
     it 'responds to broadcast without a TypeError' do
-      assert_equal @addr.broadcast, IP.new('1.2.3.255/24@foo')
+      assert_equal IP.new('1.2.3.255/24@foo'), @addr.broadcast
     end
 
     it 'responds to mask without a TypeError' do
-      assert_equal @addr.mask, 255
+      assert_equal 255, @addr.mask
     end
 
     it 'responds to netmask without a TypeError' do
-      assert_equal @addr.netmask, IP.new('255.255.255.0')
+      assert_equal IP.new('255.255.255.0'), @addr.netmask
     end
 
     it 'responds to wildmask without a TypeError' do
-      assert_equal @addr.wildmask, IP.new('0.0.0.255')
+      assert_equal IP.new('0.0.0.255'), @addr.wildmask
     end
 
     it 'responds to offset without a TypeError' do
-      assert_equal @addr.offset, 4
+      assert_equal 4, @addr.offset
     end
   end
 
