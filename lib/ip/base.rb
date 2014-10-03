@@ -327,6 +327,7 @@ class IP
     PROTO_TO_CLASS[PROTO] = self
     ADDR_BITS = 32
     MASK = (1 << ADDR_BITS) - 1
+    ARPA = ".in-addr.arpa."
 
     # Parse a string; return an V4 instance if it's a valid IPv4 address,
     # nil otherwise
@@ -354,7 +355,7 @@ class IP
     end
     # return the arpa version of the address for reverse DNS: http://en.wikipedia.org/wiki/Reverse_DNS_lookup
     def to_arpa
-      format('%d.%d.%d.%d.in-addr.arpa.',
+      format("%d.%d.%d.%d#{ARPA}",
              @addr & 0xff,
              (@addr >> 8) & 0xff,
              (@addr >> 16) & 0xff,
@@ -368,6 +369,7 @@ class IP
     PROTO_TO_CLASS[PROTO] = self
     ADDR_BITS = 128
     MASK = (1 << ADDR_BITS) - 1
+    ARPA = ".ip6.arpa"
 
     # Parse a string; return an V6 instance if it's a valid IPv6 address,
     # nil otherwise
@@ -458,7 +460,7 @@ class IP
 
     #return the arpa version of the address for reverse DNS: http://en.wikipedia.org/wiki/Reverse_DNS_lookup
     def to_arpa
-      to_nibbles.reverse.join('.') + '.ip6.arpa'
+      to_nibbles.reverse.join('.') + ARPA
     end
 
     def ipv4_mapped?
