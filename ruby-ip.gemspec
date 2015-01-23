@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.summary = 'IP address manipulation library'
   s.homepage = 'http://github.com/deploy2/ruby-ip'
   s.description = 'IP address manipulation library'
+  s.license = 'Ruby'
 
   s.files = Dir['lib/**/*.rb'] +
             Dir['test/**/*.rb'] +
