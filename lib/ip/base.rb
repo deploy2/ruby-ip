@@ -64,6 +64,26 @@ class IP
     self.class::PROTO
   end
 
+  # Creates a new ip containing the given network byte ordered
+  # string form of an IP address.
+  def IP::new_ntoh(addr)
+    return IP.new(IP::ntop(addr))
+  end
+
+  # Convert a network byte ordered string form of an IP address into
+  # human readable form.
+  def IP::ntop(addr)
+    case addr.size
+    when 4
+      s = addr.unpack('C4').join('.')
+    when 16
+      s = (["%.4x"] * 8).join(':') % addr.unpack('n8')
+    else
+      fail ArgumentError, 'Invalid address value'
+    end
+    return s
+  end
+
   # Return the string representation of the address, x.x.x.x[/pfxlen][@ctx]
   def to_s
     ctx ? "#{to_addrlen}@#{ctx}" : to_addrlen
@@ -361,6 +381,11 @@ class IP
              (@addr >> 16) & 0xff,
              (@addr >> 24) & 0xff)
     end
+
+    # Returns a network byte ordered string form of the IP address.
+    def hton
+      [@addr].pack('N')
+    end
   end
 
   class V6 < IP
@@ -450,6 +475,11 @@ class IP
       else
         return to_hex.scan(/..../).join(':')
       end
+    end
+
+    # Returns a network byte ordered string form of the IP address.
+    def hton
+      (0..7).map { |i| (@addr >> (112 - 16 * i)) & 0xffff }.pack('n8')
     end
 
     # Returns the address broken into an array of 32 nibbles.  Useful for

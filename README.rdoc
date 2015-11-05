@@ -22,6 +22,20 @@ Docs:: http://deploy2.github.com/ruby-ip/
     ip.to_arpa    # "53.2.0.192.in-addr.arpa."
     ip.pfxlen     # 24
 
+* Convert from IPAddr to IP and back to IPAddr
+
+    # new IPAddr
+    ipaddr = IPAddr.new('192.168.2.1')
+    # => #<IPAddr: IPv4:192.168.2.1/255.255.255.255>
+
+    # convert it to IP
+    ip_from_ipaddr = IP.new_ntoh(ipaddr.hton)
+    # => <IP::V4 192.168.2.1>
+
+    # and back to IPAddr
+    ipaddr_from_ip = IPAddr.new_ntoh(ip_from_ipaddr.hton)
+    # => #<IPAddr: IPv4:192.168.2.1/255.255.255.255>
+
 * Qualify IP address with "routing context" (VRF)
 
     ip = IP.new("192.0.2.53/24@cust1")
@@ -72,19 +86,18 @@ Docs:: http://deploy2.github.com/ruby-ip/
 * Advanced Subnet Operations
     sn = IP.new('192.168.0.0/24')
     ip = IP.new('192.168.0.48/32')
-    sn.split                    [#<IP::V4 192.168.0.0/25>, 
+    sn.split                    [#<IP::V4 192.168.0.0/25>,
                                 #<IP::V4 192.168.0.128/25>] (2 evenly divided subnets)
-    sn.divide_by_subnets(3)     [#<IP::V4 192.168.0.0/26>, 
-                                #<IP::V4 192.168.0.64/26>, 
-                                #<IP::V4 192.168.0.128/26>, 
+    sn.divide_by_subnets(3)     [#<IP::V4 192.168.0.0/26>,
+                                #<IP::V4 192.168.0.64/26>,
+                                #<IP::V4 192.168.0.128/26>,
                                 #<IP::V4 192.168.0.192/26>] (4 evenly divided subnets)
     #keep in mind this always takes into account a network and broadcast address
-    sn.divide_by_hosts(100)     [#<IP::V4 192.168.0.0/25>, 
+    sn.divide_by_hosts(100)     [#<IP::V4 192.168.0.0/25>,
                                 #<IP::V4 192.168.0.128/25>] (128 hosts each)
     ip = IP.new('192.168.0.48/32')
     ip.is_in?(sn)
-    => true 
-    
+    => true
 
 * Convert to and from a compact Array representation
 
@@ -104,6 +117,46 @@ Docs:: http://deploy2.github.com/ruby-ip/
     ip1 == ip2   # true
 
 * Addresses are Comparable, sortable, and can be used as Hash keys
+
+* Addresses can be stored in a VARBINARY(16) database column as string of bytes
+
+    # == Schema Information
+    #
+    # Table name: ipaddresses
+    #
+    #  id         :integer          not null, primary key
+    #  address    :binary(16)
+    #  pfxlen     :integer
+    #  created_at :datetime         not null
+    #  updated_at :datetime         not null
+    #
+    # Indexes
+    #
+    #  index_ipaddresses_on_address  (address)
+    #  index_ipaddresses_on_pfxlen   (pfxlen)
+    #
+
+    require 'ip'
+    class IpAddress < ActiveRecord::Base
+      validates_uniqueness_of :address, scope: [:pfxlen]
+      validates_presence_of :address, :pfxlen
+
+      # IpAddress.last.address returns an IP object
+      def address
+        IP.new("#{IP.new_ntoh(super).to_s}/#{pfxlen}")
+      end
+
+      # Address can be set with string:
+      # ipaddress = IpAddress.new({address: '2001:db8:be00::/128'})
+      # Or IP object:
+      # ip = IP.new('2001:db8:be00::/128')
+      # ipaddress = IpAddress.new({address: ip})
+      def address=(arg)
+        ip = IP.new(arg)
+        self.pfxlen = ip.pfxlen
+        super(ip.hton)
+      end
+    end
 
 == Why not IPAddr?
 
