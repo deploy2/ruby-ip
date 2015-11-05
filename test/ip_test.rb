@@ -120,8 +120,8 @@ class IPTest < Minitest::Test
         assert_equal '4.3.2.1.in-addr.arpa.', @addr.to_arpa
       end
 
-      it 'has to_hton' do
-        assert_equal "\x01\x02\x03\x04", @addr.to_hton
+      it 'has hton' do
+        assert_equal "\x01\x02\x03\x04", @addr.hton
       end
 
       it 'has to_i' do
@@ -415,7 +415,7 @@ class IPTest < Minitest::Test
     end
 
     it 'builds from hton' do
-      hton = IP::V6.new(0xdeadbeef000000000000000000000123, 24, 'foo').to_hton
+      hton = IP::V6.new(0xdeadbeef000000000000000000000123, 24, 'foo').hton
       res = IP.new_ntoh(hton)
       assert_equal IP::V6, res.class
       assert_equal 128, res.pfxlen
@@ -448,9 +448,9 @@ class IPTest < Minitest::Test
       assert_equal '3.2.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.f.e.e.b.d.a.e.d.ip6.arpa', res.to_arpa
     end
 
-    it 'has to_hton' do
+    it 'has hton' do
       res = String.new
-      IP.new('dead:beef::123').to_hton.each_byte { |c|
+      IP.new('dead:beef::123').hton.each_byte { |c|
         res += sprintf("%02x", c)
       }
       assert_equal 'deadbeef000000000000000000000123', res
@@ -474,8 +474,8 @@ class IPTest < Minitest::Test
       assert_equal '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
     end
 
-    it 'has to_hton' do
-      assert_equal "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", @addr.to_hton
+    it 'has hton' do
+      assert_equal "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", @addr.hton
     end
   end
 
@@ -496,8 +496,8 @@ class IPTest < Minitest::Test
       assert_equal '1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
     end
 
-    it 'has to_hton' do
-      assert_equal "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01", @addr.to_hton
+    it 'has hton' do
+      assert_equal "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01", @addr.hton
     end
   end
 
@@ -524,8 +524,8 @@ class IPTest < Minitest::Test
       assert_equal '4.0.3.0.2.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
     end
 
-    it 'has to_hton' do
-      assert_equal "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x03\x04", @addr.to_hton
+    it 'has hton' do
+      assert_equal "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x03\x04", @addr.hton
     end
   end
 
@@ -552,9 +552,9 @@ class IPTest < Minitest::Test
       assert_equal '4.0.3.0.2.0.1.0.f.f.f.f.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa', @addr.to_arpa
     end
 
-    it 'has to_hton' do
+    it 'has hton' do
       assert_equal "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF\x01\x02\x03\x04".force_encoding("ASCII-8BIT"),
-        @addr.to_hton
+        @addr.hton
     end
 
     it 'converts v6 addresses unambiguously' do
@@ -632,8 +632,8 @@ class IPTest < Minitest::Test
       assert_equal '4.3.2.1.in-addr.arpa.', @addr.to_arpa
     end
 
-    it 'responds to to_hton withouth a TypeError' do
-      assert_equal "\x01\x02\x03\x04", @addr.to_hton
+    it 'responds to hton withouth a TypeError' do
+      assert_equal "\x01\x02\x03\x04", @addr.hton
     end
 
     it 'responds to to_i withouth a TypeError' do

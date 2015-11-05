@@ -22,6 +22,20 @@ Docs:: http://deploy2.github.com/ruby-ip/
     ip.to_arpa    # "53.2.0.192.in-addr.arpa."
     ip.pfxlen     # 24
 
+* Convert from IPAddr to IP and back to IPAddr
+
+    # new IPAddr
+    ipaddr = IPAddr.new('192.168.2.1')
+    # => #<IPAddr: IPv4:192.168.2.1/255.255.255.255>
+
+    # convert it to IP
+    ip_from_ipaddr = IP.new_ntoh(ipaddr.hton)
+    # => <IP::V4 192.168.2.1>
+
+    # and back to IPAddr
+    ipaddr_from_ip = IPAddr.new_ntoh(ip_from_ipaddr.hton)
+    # => #<IPAddr: IPv4:192.168.2.1/255.255.255.255>
+
 * Qualify IP address with "routing context" (VRF)
 
     ip = IP.new("192.0.2.53/24@cust1")
@@ -140,7 +154,7 @@ Docs:: http://deploy2.github.com/ruby-ip/
       def address=(arg)
         ip = IP.new(arg)
         self.pfxlen = ip.pfxlen
-        super(ip.to_hton)
+        super(ip.hton)
       end
     end
 

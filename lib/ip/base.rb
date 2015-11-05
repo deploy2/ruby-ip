@@ -383,7 +383,7 @@ class IP
     end
 
     # Returns a network byte ordered string form of the IP address.
-    def to_hton
+    def hton
       [@addr].pack('N')
     end
   end
@@ -478,7 +478,7 @@ class IP
     end
 
     # Returns a network byte ordered string form of the IP address.
-    def to_hton
+    def hton
       (0..7).map { |i| (@addr >> (112 - 16 * i)) & 0xffff }.pack('n8')
     end
 
