@@ -95,7 +95,7 @@ class IP
   # (Removing the last element makes them Comparable, as nil.<=> doesn't exist)
   def to_a
     @ctx ? [self.class::PROTO, @addr, @pfxlen, @ctx] :
-           [self.class::PROTO, @addr, @pfxlen]
+      [self.class::PROTO, @addr, @pfxlen]
   end
 
   # Return an array representation of the address, with 3 or 4 elements
@@ -104,7 +104,7 @@ class IP
   #    ["v4", "01020304", 28, "context"]
   def to_ah
     @ctx ? [self.class::PROTO, to_hex, @pfxlen, @ctx] :
-           [self.class::PROTO, to_hex, @pfxlen]
+      [self.class::PROTO, to_hex, @pfxlen]
   end
 
   # Change the prefix length. If nil, the maximum is used (32 or 128)
@@ -193,7 +193,7 @@ class IP
   # Here I turn it into 1.2.3.0..1.2.3.255. Which is better?
   def to_range
     self.class.new(@addr & ~mask, self.class::ADDR_BITS, @ctx) ..
-    self.class.new(@addr | mask, self.class::ADDR_BITS, @ctx)
+      self.class.new(@addr | mask, self.class::ADDR_BITS, @ctx)
   end
   # test if the address is in the provided subnet
   def is_in?(subnet)
@@ -228,7 +228,7 @@ class IP
       end
       nets = new_nets
       break if number_subnets <= nets.length &&
-               nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+        nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
     end
     nets
   end
@@ -238,12 +238,36 @@ class IP
     nets = []
     nets << self
     while number_hosts <= (nets[0].split[0].size - 2) &&
-          nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
+      nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
       new_nets = []
       nets.each do |net|
         new_nets = new_nets | net.split
       end
       nets = new_nets
+    end
+    nets
+  end
+
+  # deaggregate address range
+  #   IP.new('1.2.0.0').deaggregate(IP.new('1.3.255.255'))
+  #     => [#<IP::V4 1.2.0.0/15>]
+  #   IP.new('1.2.0.0').deaggregate(IP.new('1.4.255.255'))
+  #     => [#<IP::V4 1.2.0.0/15>, #<IP::V4 1.4.0.0/16>]
+  #   IP.new('2001:db8:85a3:8d3::').deaggregate(IP.new('2001:0db8:85a3:08d3:ffff:ffff:ffff:ffff'))
+  #     => [#<IP::V6 2001:db8:85a3:8d3::/64>]
+  #   IP.new('2001:db8:85a3:8d3::').deaggregate(IP.new('2001:db8:85a3:8d3:1::'))
+  #     => [#<IP::V6 2001:db8:85a3:8d3::/80>, #<IP::V6 2001:db8:85a3:8d3:1::>]
+  def deaggregate(other)
+    nets = []
+    base = self.to_i
+    while (base <= other.to_i) do
+      step = 0
+      while ((base | (1 << step)) != base) do
+        break if ((base | (((~0) & self.class::ADDR_MAX) >> (self.class::ADDR_BITS-1-step))) > other.to_i)
+        step += 1
+      end
+      nets << self.class.new(base, self.class::ADDR_BITS-step, @ctx)
+      base += 1 << step
     end
     nets
   end
@@ -325,6 +349,7 @@ class IP
     class << self; alias_method :new, :orig_new; end
     PROTO = 'v4'.freeze
     PROTO_TO_CLASS[PROTO] = self
+    ADDR_MAX = 4294967295
     ADDR_BITS = 32
     MASK = (1 << ADDR_BITS) - 1
     ARPA = ".in-addr.arpa."
@@ -367,6 +392,7 @@ class IP
     class << self; alias_method :new, :orig_new; end
     PROTO = 'v6'.freeze
     PROTO_TO_CLASS[PROTO] = self
+    ADDR_MAX = 340282366920938463463374607431768211455
     ADDR_BITS = 128
     MASK = (1 << ADDR_BITS) - 1
     ARPA = ".ip6.arpa"

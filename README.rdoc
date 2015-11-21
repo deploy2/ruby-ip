@@ -72,19 +72,29 @@ Docs:: http://deploy2.github.com/ruby-ip/
 * Advanced Subnet Operations
     sn = IP.new('192.168.0.0/24')
     ip = IP.new('192.168.0.48/32')
-    sn.split                    [#<IP::V4 192.168.0.0/25>, 
+    sn.split                    [#<IP::V4 192.168.0.0/25>,
                                 #<IP::V4 192.168.0.128/25>] (2 evenly divided subnets)
-    sn.divide_by_subnets(3)     [#<IP::V4 192.168.0.0/26>, 
-                                #<IP::V4 192.168.0.64/26>, 
-                                #<IP::V4 192.168.0.128/26>, 
+    sn.divide_by_subnets(3)     [#<IP::V4 192.168.0.0/26>,
+                                #<IP::V4 192.168.0.64/26>,
+                                #<IP::V4 192.168.0.128/26>,
                                 #<IP::V4 192.168.0.192/26>] (4 evenly divided subnets)
     #keep in mind this always takes into account a network and broadcast address
-    sn.divide_by_hosts(100)     [#<IP::V4 192.168.0.0/25>, 
+    sn.divide_by_hosts(100)     [#<IP::V4 192.168.0.0/25>,
                                 #<IP::V4 192.168.0.128/25>] (128 hosts each)
     ip = IP.new('192.168.0.48/32')
     ip.is_in?(sn)
-    => true 
-    
+    => true
+
+* Deaggregate subnets from range
+
+    IP.new('1.2.0.0').deaggregate(IP.new('1.3.255.255'))
+      => [#<IP::V4 1.2.0.0/15>]
+    IP.new('1.2.0.0').deaggregate(IP.new('1.4.255.255'))
+      => [#<IP::V4 1.2.0.0/15>, #<IP::V4 1.4.0.0/16>]
+    IP.new('2001:db8:85a3:8d3::').deaggregate(IP.new('2001:0db8:85a3:08d3:ffff:ffff:ffff:ffff'))
+      => [#<IP::V6 2001:db8:85a3:8d3::/64>]
+    IP.new('2001:db8:85a3:8d3::').deaggregate(IP.new('2001:db8:85a3:8d3:1::'))
+      => [#<IP::V6 2001:db8:85a3:8d3::/80>, #<IP::V6 2001:db8:85a3:8d3:1::>]
 
 * Convert to and from a compact Array representation
 
