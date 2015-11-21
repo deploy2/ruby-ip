@@ -198,6 +198,16 @@ class IPTest < Minitest::Test
                      IP.new('1.2.3.0/24').divide_by_hosts(68)
       end
 
+      it 'deaggregates address range to subnet' do
+        assert_equal IP.new('1.2.0.0').deaggregate(IP.new('1.3.255.255')),
+          [IP.new('1.2.0.0/15')]
+      end
+
+      it 'deaggregates address range to subnets' do
+        assert_equal IP.new('1.2.0.0').deaggregate(IP.new('1.4.255.255')),
+          [IP.new('1.2.0.0/15'), IP.new('1.4.0.0/16')]
+      end
+
       it 'has size' do
         assert_equal 256, @addr.size
       end
