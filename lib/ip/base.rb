@@ -220,6 +220,7 @@ class IP
   # stop when subnets reach their smallest possible size (i.e. 31 for IP4)
   def divide_by_subnets(number_subnets)
     nets = []
+    return nets if split.empty?
     nets << self
     loop do
       new_nets = []
@@ -236,6 +237,7 @@ class IP
   # subdivide a larger subnet into smaller subnets by number of hosts
   def divide_by_hosts(number_hosts)
     nets = []
+    return nets if split.empty?
     nets << self
     while number_hosts <= (nets[0].split[0].size - 2) &&
           nets[0].pfxlen <= (self.class::ADDR_BITS - 1)
