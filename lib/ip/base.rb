@@ -220,6 +220,7 @@ class IP
   # stop when subnets reach their smallest possible size (i.e. 31 for IP4)
   def divide_by_subnets(number_subnets)
     nets = []
+    return nets if split.empty?
     nets << self
     loop do
       new_nets = []

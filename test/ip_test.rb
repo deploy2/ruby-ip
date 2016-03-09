@@ -174,6 +174,14 @@ class IPTest < Minitest::Test
                      IP.new('1.2.3.0/24').split
       end
 
+      it 'has divide_by_subnets returns empty array when single IPv4' do
+        assert_equal [], IP.new('1.2.3.4').divide_by_subnets(1)
+      end
+
+      it 'has divide_by_subnets returns empty array when single IPv6' do
+        assert_equal [], IP.new('1:0:2:0:0:0:0:0').divide_by_subnets(1)
+      end
+
       it 'has divide_by_subnets be exact' do
         assert_equal [IP.new('1.2.3.0/26'), IP.new('1.2.3.64/26'),
                       IP.new('1.2.3.128/26'), IP.new('1.2.3.192/26')],
