@@ -206,6 +206,14 @@ class IPTest < Minitest::Test
                      IP.new('1.2.3.0/24').divide_by_hosts(68)
       end
 
+      it 'has divide_by_hosts returns empty array when single IPv4' do
+        assert_equal [], IP.new('1.2.3.4/32').divide_by_hosts(68)
+      end
+
+      it 'has divide_by_hosts returns empty array when single IPv6' do
+        assert_equal [], IP.new('1:0:2:0:0:0:0:0').divide_by_subnets(1)
+      end
+
       it 'has size' do
         assert_equal 256, @addr.size
       end
