@@ -392,7 +392,9 @@ class IP
         return nil if pfxlen > 128
         ctx = Regexp.last_match[3]
         return nil if pfxlen > 128
-        if addr =~ /\A(.*?)::(.*)\z/
+        if addr =~ /:::/ || addr.scan(/::/).count > 1
+          return nil
+        elsif addr =~ /\A(.*?)::(.*)\z/
           left, right = Regexp.last_match[1], Regexp.last_match[2]
           l = left.split(':', -1)
           r = right.split(':', -1)
